@@ -36,11 +36,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4">
-      <div className="bg-white max-w-md w-full rounded-3xl shadow-xl border border-amber-100 p-8 space-y-6">
+    <div className="auth-shell">
+      <div className="auth-panel max-w-md w-full p-8 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500 text-amber-950 font-black text-3xl shadow-md mb-2">
+          <div className="brand-mark inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white font-black text-3xl shadow-md mb-2">
             क
           </div>
           <h1 className="text-2xl font-extrabold text-amber-950">{t.login}</h1>

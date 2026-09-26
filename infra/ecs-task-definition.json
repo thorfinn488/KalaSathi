@@ -1,0 +1,56 @@
+{
+  "family": "sih26090-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "REPLACED_BY_CI",
+  "taskRoleArn": "REPLACED_BY_CI",
+  "volumes": [
+    {
+      "name": "artisan-uploads",
+      "efsVolumeConfiguration": {
+        "fileSystemId": "REPLACED_BY_CI",
+        "transitEncryption": "ENABLED",
+        "authorizationConfig": {
+          "accessPointId": "REPLACED_BY_CI",
+          "iam": "ENABLED"
+        }
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "sih-backend",
+      "image": "REPLACED_BY_CI",
+      "essential": true,
+      "portMappings": [{ "containerPort": 8000, "protocol": "tcp" }],
+      "mountPoints": [{ "sourceVolume": "artisan-uploads", "containerPath": "/app/uploads", "readOnly": false }],
+      "environment": [
+        { "name": "PORT", "value": "8000" },
+        { "name": "CORS_ORIGINS", "value": "[\"https://app.example.com\"]" },
+        { "name": "STORAGE_BACKEND", "value": "local" },
+        { "name": "UPLOAD_DIR", "value": "/app/uploads" }
+      ],
+      "secrets": [
+        { "name": "DATABASE_URL", "valueFrom": "REPLACED_BY_CI" },
+        { "name": "JWT_SECRET", "valueFrom": "REPLACED_BY_CI" }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)\" || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 30
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/sih26090-backend",
+          "awslogs-region": "REPLACED_BY_CI",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

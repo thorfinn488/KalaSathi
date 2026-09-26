@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { ProductDetail, Opportunity } from '../types';
-import { apiRequest } from '../api/client';
+import { apiRequest, resolveAssetUrl } from '../api/client';
 import { ArrowLeft, Edit3, IndianRupee, Tag, Building2, MapPin, Sparkles, CheckCircle2, ShieldCheck, Volume2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ProductDetailPageProps {
@@ -136,7 +136,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
           <div className="bg-white rounded-3xl border border-amber-200 overflow-hidden shadow-lg">
             {product.image_url ? (
               <img
-                src={product.image_url}
+                src={resolveAssetUrl(product.image_url)}
                 alt={product.catalogue?.name}
                 className="w-full h-80 object-cover"
                 onError={(event) => {
@@ -158,7 +158,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                 <Volume2 className="w-5 h-5 text-amber-600" />
                 <span>Original Artisan Voice Note</span>
               </div>
-              <audio controls src={product.audio[0].url} className="w-full h-10" />
+              <audio controls src={resolveAssetUrl(product.audio[0].url)} className="w-full h-10" />
             </div>
           )}
         </div>

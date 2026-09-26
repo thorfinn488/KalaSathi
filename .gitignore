@@ -1,12 +1,35 @@
+# Environment secrets; retain checked-in templates only.
 .env
-*.db
-*.sqlite
-__pycache__/
-*.pyc
-.pytest_cache/
+.env.*
+!.env.example
+!**/.env.example
+
+# Node.js and frontend build output.
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+coverage/
+
+# Python environments, bytecode, and test output.
 .venv/
 venv/
-node_modules/
-dist/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local databases and uploaded user content.
+*.db
+*.sqlite
+*.sqlite3
 uploads/
 repomix-output.txt
+**/uploads/
+
+# Local platform configuration and logs.
+.vercel/
+frontend/.vercel/
+*.log
+.DS_Store
+Thumbs.db

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host --port 3000",
     "build": "tsc && vite build",
+    "test": "tsc --noEmit",
     "preview": "vite preview --port 3000"
   },
   "dependencies": {

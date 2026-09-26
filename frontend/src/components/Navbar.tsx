@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, User as UserIcon, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   currentTab: string;
@@ -11,27 +11,39 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => {
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
+    { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
+    { id: 'opportunities', label: t.opportunities, icon: ShoppingBag, visible: Boolean(user) },
+    { id: 'admin', label: 'Admin Panel', icon: ShieldCheck, visible: user?.role === 'ADMIN' },
+  ].filter((item) => item.visible);
 
   return (
-    <header className="bg-gradient-to-r from-amber-800 via-amber-900 to-amber-950 text-white shadow-lg sticky top-0 z-50">
+    <header className="glass-header sticky top-0 z-50 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Branding */}
           <div 
             className="flex items-center gap-3 cursor-pointer select-none"
+            role="button"
+            tabIndex={0}
+            aria-label="Go to dashboard"
             onClick={() => setCurrentTab('dashboard')}
+            onKeyDown={(event) => event.key === 'Enter' && setCurrentTab('dashboard')}
           >
-            <div className="w-10 h-10 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center font-black text-xl shadow-md">
+            <div className="brand-mark w-10 h-10 rounded-xl text-white flex items-center justify-center font-black text-xl shadow-lg">
               क
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-xl tracking-tight text-amber-100">{t.appName}</span>
-                <span className="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 flex items-center gap-1 font-medium">
-                  <Sparkles className="w-3 h-3 text-amber-400" /> AI Business Manager
+                <span className="font-extrabold text-xl tracking-tight text-white">{t.appName}</span>
+                <span className="hidden lg:flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs font-medium text-cyan-200">
+                  <Sparkles className="w-3 h-3 text-cyan-300" /> AI business manager
                 </span>
               </div>
-              <p className="text-xs text-amber-200/80 hidden sm:block">{t.tagline}</p>
+              <p className="text-xs text-white/45 hidden sm:block">{t.tagline}</p>
             </div>
           </div>
 
@@ -41,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <button
                 onClick={() => setCurrentTab('dashboard')}
                 className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
-                  currentTab === 'dashboard' ? 'bg-amber-500/30 text-amber-200 border border-amber-500/40' : 'text-amber-100/80 hover:bg-amber-800/60'
+                  currentTab === 'dashboard' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -52,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                 <button
                   onClick={() => setCurrentTab('add-product')}
                   className={`px-3 py-2 rounded-lg font-semibold text-sm transition-all flex items-center gap-1.5 ${
-                    currentTab === 'add-product' ? 'bg-amber-500 text-amber-950 shadow-md' : 'bg-amber-600 hover:bg-amber-500 text-white'
+                    currentTab === 'add-product' ? 'bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 text-white shadow-lg shadow-purple-500/20' : 'text-white/70 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <PlusCircle className="w-4 h-4" />
@@ -63,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <button
                 onClick={() => setCurrentTab('opportunities')}
                 className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
-                  currentTab === 'opportunities' ? 'bg-amber-500/30 text-amber-200 border border-amber-500/40' : 'text-amber-100/80 hover:bg-amber-800/60'
+                  currentTab === 'opportunities' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -74,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                 <button
                   onClick={() => setCurrentTab('admin')}
                   className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
-                    currentTab === 'admin' ? 'bg-amber-500/30 text-amber-200 border border-amber-500/40' : 'text-amber-100/80 hover:bg-amber-800/60'
+                    currentTab === 'admin' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
@@ -85,26 +97,26 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           )}
 
           {/* User Controls & Language Toggle */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-              className="bg-amber-800/80 hover:bg-amber-700 text-amber-100 px-3 py-1.5 rounded-lg border border-amber-600/40 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-white/75 transition-all hover:bg-white/10 sm:px-3"
             >
-              <Languages className="w-4 h-4 text-amber-300" />
-              <span>{language === 'en' ? 'हिंदी' : 'English'}</span>
+              <Languages className="w-4 h-4 text-cyan-300" />
+              <span className="hidden sm:inline">{language === 'en' ? 'हिंदी' : 'English'}</span>
             </button>
 
             {user ? (
-              <div className="flex items-center gap-3 pl-2 border-l border-amber-700/60">
+              <div className="flex items-center gap-2 border-l border-white/10 pl-2 sm:gap-3 sm:pl-3">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-bold text-amber-100">{user.name}</span>
-                  <span className="text-[10px] text-amber-300/80 font-mono uppercase">{user.role}</span>
+                  <span className="text-xs font-bold text-white">{user.name}</span>
+                  <span className="text-[10px] text-cyan-200/70 font-mono uppercase">{user.role}</span>
                 </div>
                 <button
                   onClick={logout}
                   title={t.logout}
-                  className="p-2 text-amber-200/80 hover:text-white hover:bg-amber-800 rounded-lg transition-all"
+                  className="rounded-lg p-2 text-white/60 transition-all hover:bg-white/10 hover:text-white"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
@@ -113,21 +125,47 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentTab('login')}
-                  className="text-amber-100 hover:text-white px-3 py-1.5 text-xs font-semibold rounded-lg hover:bg-amber-800/50"
+                  className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/5 hover:text-white"
                 >
                   {t.login}
                 </button>
                 <button
                   onClick={() => setCurrentTab('register')}
-                  className="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold px-3 py-1.5 text-xs rounded-lg shadow-sm"
+                  className="rounded-lg bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 px-3 py-1.5 text-xs font-bold text-white shadow-lg shadow-purple-500/20 transition hover:brightness-110"
                 >
                   {t.register}
                 </button>
               </div>
             )}
           </div>
+          {user && (
+            <button
+              type="button"
+              className="rounded-lg border border-white/10 p-2 text-white/75 md:hidden"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          )}
         </div>
       </div>
+      {user && menuOpen && (
+        <nav className="mobile-nav border-t border-white/10 px-4 py-2 md:hidden" aria-label="Mobile navigation">
+          {navItems.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => { setCurrentTab(id); setMenuOpen(false); }}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-semibold transition ${currentTab === id ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
+              aria-current={currentTab === id ? 'page' : undefined}
+            >
+              <Icon className="h-4 w-4" />{label}
+            </button>
+          ))}
+        </nav>
+      )}
     </header>
   );
 };

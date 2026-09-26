@@ -48,7 +48,8 @@ app.include_router(dashboard.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
 
 
-@app.get("/health", tags=["Health"])
+@app.get("/healthz", tags=["Health"])
+@app.get("/health", tags=["Health"], include_in_schema=False)
 def health_check():
     return {
         "status": "healthy",

@@ -17,11 +17,11 @@ function MainApp() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50/50 flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center font-black text-2xl animate-spin mb-4">
+      <div className="min-h-screen app-shell flex flex-col items-center justify-center p-4">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 via-indigo-500 to-cyan-400 text-white flex items-center justify-center font-black text-2xl animate-pulse mb-4 shadow-2xl shadow-purple-500/20">
           क
         </div>
-        <p className="text-amber-900 font-bold text-sm">Loading KalaSaathi...</p>
+        <p className="text-white/70 font-bold text-sm">Loading KalaSaathi...</p>
       </div>
     );
   }
@@ -44,7 +44,7 @@ function MainApp() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-amber-50/30 text-slate-800">
+    <div className="min-h-screen flex flex-col app-shell text-white">
       <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
       <main className="flex-1 pb-16">
@@ -80,9 +80,11 @@ function MainApp() {
         {currentTab === 'admin' && <AdminPage />}
       </main>
 
-      <footer className="bg-amber-950 text-amber-200/60 text-xs py-6 border-t border-amber-900 text-center space-y-1">
-        <p className="font-semibold text-amber-100">SIH 26090 — AI Business Manager for Marginalized Artisans</p>
-        <p>Contract-First Architecture • Empowering Rural Artisans with Voice AI & Smart Market Linkage</p>
+      <footer className="app-footer border-t border-white/10 px-5 py-6 text-xs text-white/45">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 sm:flex-row">
+          <p className="font-semibold text-white/75">KalaSaathi <span className="text-white/30">·</span> AI business tools for artisan communities</p>
+          <p className="inline-flex items-center gap-2"><span className="live-dot" aria-hidden="true" /> Market linkage services active</p>
+        </div>
       </footer>
     </div>
   );

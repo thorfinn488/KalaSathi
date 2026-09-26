@@ -1,6 +1,14 @@
 import { ApiResponseEnvelope } from '../types';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+
+export function resolveAssetUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (/^(?:[a-z]+:)?\/\//i.test(path) || /^(?:data|blob):/i.test(path)) return path;
+
+  const apiOrigin = new URL(API_BASE_URL, window.location.origin).origin;
+  return new URL(path, apiOrigin).toString();
+}
 
 export async function apiRequest<T>(
   endpoint: string,
