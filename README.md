@@ -1,4 +1,4 @@
-# SIH2690
+# KalaSathi
 
 AI Business Manager for Artisans. This repository is a small monorepo containing a Vite/React frontend and a FastAPI backend.
 
