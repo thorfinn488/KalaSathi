@@ -117,6 +117,14 @@ export interface DashboardSummary {
   total_products: number;
   catalogue_status: CatalogueStatusCounts;
   recent_products: ProductDetail[];
+  trends: {
+    monthly_activity: { month: string; count: number }[];
+    categories: { name: string; products: number; average_suggested_price: number | null }[];
+    average_suggested_price: number | null;
+    priced_products: number;
+    open_opportunities: number;
+    average_match_score: number | null;
+  };
 }
 
 export interface InsightItem {

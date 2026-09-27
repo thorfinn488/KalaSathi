@@ -1,6 +1,9 @@
 import { ApiResponseEnvelope } from '../types';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+const API_CONFIGURATION_ERROR = import.meta.env.PROD && !/^https:\/\//i.test(API_BASE_URL)
+  ? 'Production API URL is not configured. Set VITE_API_BASE_URL in Vercel to the HTTPS backend URL ending in /api.'
+  : null;
 
 export function resolveAssetUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
@@ -14,6 +17,10 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
+  if (API_CONFIGURATION_ERROR) {
+    throw new Error(API_CONFIGURATION_ERROR);
+  }
+
   const token = localStorage.getItem('sih_auth_token');
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
@@ -33,7 +40,23 @@ export async function apiRequest<T>(
     headers,
   });
 
-  const json: ApiResponseEnvelope<T> = await response.json();
+  const responseBody = await response.text();
+  let json: ApiResponseEnvelope<T> | null = null;
+  try {
+    json = responseBody ? JSON.parse(responseBody) as ApiResponseEnvelope<T> : null;
+  } catch {
+    json = null;
+  }
+
+  if (!json || typeof json !== 'object') {
+    const message = response.ok
+      ? 'The service returned an unexpected response. Please try again.'
+      : `The API service is unavailable (HTTP ${response.status}). Check the backend deployment and try again.`;
+    const errorObj: any = new Error(message);
+    errorObj.code = 'INVALID_API_RESPONSE';
+    errorObj.status = response.status;
+    throw errorObj;
+  }
 
   if (!response.ok || !json.success) {
     const errorMsg = json.error?.message || `HTTP ${response.status}: Request failed`;

@@ -76,9 +76,9 @@ textarea:focus-visible {
 
 .dashboard-hero {
   background:
-    radial-gradient(ellipse at 79% 18%, rgba(34, 211, 238, 0.13), transparent 28rem),
-    radial-gradient(ellipse at 53% 120%, rgba(124, 58, 237, 0.18), transparent 34rem),
-    linear-gradient(128deg, #17131f 0%, #111319 54%, #101b20 100%);
+    radial-gradient(ellipse at 88% 0%, rgba(52, 211, 153, 0.12), transparent 28rem),
+    radial-gradient(ellipse at 18% 100%, rgba(251, 191, 36, 0.07), transparent 31rem),
+    linear-gradient(128deg, #151b19 0%, #111615 54%, #17201c 100%);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.035);
 }
 
@@ -140,9 +140,8 @@ textarea:focus-visible {
 }
 
 .bento-panel:hover {
-  transform: translateY(-2px);
-  border-color: rgba(167, 139, 250, 0.2);
-  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.22), 0 0 32px rgba(124, 58, 237, 0.045);
+  border-color: rgba(110, 231, 183, 0.17);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18), 0 0 24px rgba(52, 211, 153, 0.035);
 }
 
 .metric-panel { min-height: 132px; }
@@ -198,6 +197,24 @@ textarea:focus-visible {
   border-color: rgba(103, 232, 249, 0.16);
   background: rgba(34, 211, 238, 0.075);
 }
+
+.green-tile {
+  border-color: rgba(110, 231, 183, 0.17);
+  background: rgba(16, 185, 129, 0.09);
+}
+
+.amber-tile {
+  border-color: rgba(252, 211, 77, 0.17);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.activity-chart { min-height: 10rem; }
+.chart-bar-filled { background: linear-gradient(180deg, #6ee7b7, #15876a); transition: height 450ms ease; }
+.chart-bar-empty { background: rgba(255, 255, 255, 0.07); }
+.category-track { background: rgba(255, 255, 255, 0.07); }
+.category-fill { background: linear-gradient(90deg, #34d399, #d6a84b); }
+.skeleton-bar,
+.skeleton-line { background: linear-gradient(100deg, rgba(255,255,255,.035), rgba(255,255,255,.09), rgba(255,255,255,.035)); background-size: 200% 100%; animation: skeleton-shimmer 1.5s ease-in-out infinite; }
 
 .waveform {
   display: flex;
@@ -312,11 +329,10 @@ textarea:focus-visible {
 @keyframes counter-turn { to { transform: rotate(-360deg); } }
 @keyframes ping-ring { 0% { opacity: 0.65; transform: scale(0.7); } 100% { opacity: 0; transform: scale(1.8); } }
 @keyframes waveform { to { opacity: 0.9; transform: scaleY(0.65); } }
+@keyframes skeleton-shimmer { to { background-position: -200% 0; } }
 
 @media (max-width: 640px) {
-  .dashboard-hero { min-height: 350px; }
-  .dashboard-hero .text-4xl { font-size: 2.35rem; }
-  .metric-panel { min-height: 120px; }
+  .metric-panel { min-height: 118px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

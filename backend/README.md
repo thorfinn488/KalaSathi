@@ -97,6 +97,11 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 Open `http://localhost:8000/` for the React application. During frontend development, `npm run dev` starts Vite on port 3000 and proxies `/api` and `/static` to the backend on port 8000.
 
+### Deploying the Frontend Separately to Vercel
+When Vercel serves the frontend separately from FastAPI, set the Vercel project's `VITE_API_BASE_URL` environment variable to the deployed backend's HTTPS URL ending in `/api` (for example, `https://your-backend.example.com/api`). This is a Vite build-time variable, so redeploy after changing it. Do not use `/api` for a separate Vercel frontend; that sends requests to Vercel itself.
+
+On the backend, set `CORS_ORIGINS` to a JSON array containing the frontend's exact deployed origin, for example `["https://your-app.vercel.app"]`. Add each preview origin separately if previews need API access. The backend's existing default origins only cover local development.
+
 ---
 
 ## Running Unit Tests
