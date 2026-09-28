@@ -1,4 +1,5 @@
 import os
+import tempfile
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -37,9 +38,12 @@ app.add_middleware(
 # Global custom exception handlers for standard response envelope
 setup_exception_handlers(app)
 
-# Ensure local upload directory exists & mount static files route
-os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-app.mount("/static/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+# Ensure the upload directory is writable in serverless deployments.
+upload_dir = settings.UPLOAD_DIR
+if os.getenv("VERCEL") and not os.path.isabs(upload_dir):
+    upload_dir = os.path.join(tempfile.gettempdir(), upload_dir)
+os.makedirs(upload_dir, exist_ok=True)
+app.mount("/static/uploads", StaticFiles(directory=upload_dir), name="uploads")
 
 # Include API v1 routers
 app.include_router(auth.router, prefix="/api")

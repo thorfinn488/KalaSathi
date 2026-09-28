@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     REGIONAL_DAILY_WAGE: float = 400.0
     UPLOAD_DIR: str = "uploads"
     CORS_ORIGINS: list[str] = [
+        "https://kala-sathi.vercel.app",
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
