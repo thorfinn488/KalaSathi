@@ -110,6 +110,12 @@ Execute the pytest suite:
 python -m pytest tests/
 ```
 
+## Standalone PostgreSQL Order Demo
+The compact order-management schema, stock and order-total triggers, `fn_place_order`, low-stock view, and sample profit query are in `scripts/order_management_demo.sql`. It is independent of the application's SQLAlchemy schema and drops/recreates only its demo tables, view, and functions. Run it only against a disposable PostgreSQL database:
+```bash
+psql -d your_disposable_database -f scripts/order_management_demo.sql
+```
+
 ---
 
 ## Detailed Documentation
