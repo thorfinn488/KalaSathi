@@ -6,10 +6,13 @@ import { Navbar } from './components/Navbar';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { OrderDashboardPage } from './pages/OrderDashboardPage';
 import { AddProductPage } from './pages/AddProductPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { OpportunitiesPage } from './pages/OpportunitiesPage';
 import { AdminPage } from './pages/AdminPage';
+
+const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -58,6 +61,8 @@ function MainApp() {
             }}
           />
         )}
+
+        {showOrderDashboard && currentTab === 'order-dashboard' && <OrderDashboardPage />}
 
         {currentTab === 'add-product' && (
           <AddProductPage

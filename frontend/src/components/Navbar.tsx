@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3 } from 'lucide-react';
 
 interface NavbarProps {
   currentTab: string;
@@ -12,11 +12,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
   const navItems = [
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
+    { id: 'order-dashboard', label: 'Order Dashboard', icon: BarChart3, visible: Boolean(user) && showOrderDashboard },
     { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
-    { id: 'opportunities', label: t.opportunities, icon: ShoppingBag, visible: Boolean(user) },
+    { id: 'opportunities', label: t.opportunities, icon: ShoppingBag, visible: user?.role === 'BUYER' || user?.role === 'ADMIN' },
     { id: 'admin', label: 'Admin Panel', icon: ShieldCheck, visible: user?.role === 'ADMIN' },
   ].filter((item) => item.visible);
 
@@ -60,6 +62,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                 {t.dashboard}
               </button>
 
+              {showOrderDashboard && (
+                <button
+                  onClick={() => setCurrentTab('order-dashboard')}
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
+                    currentTab === 'order-dashboard' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Order Dashboard
+                </button>
+              )}
+
               {(user.role === 'ARTISAN' || user.role === 'ADMIN') && (
                 <button
                   onClick={() => setCurrentTab('add-product')}
@@ -72,15 +86,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                 </button>
               )}
 
-              <button
-                onClick={() => setCurrentTab('opportunities')}
-                className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
-                  currentTab === 'opportunities' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" />
-                {t.opportunities}
-              </button>
+              {(user.role === 'BUYER' || user.role === 'ADMIN') && (
+                <button
+                  onClick={() => setCurrentTab('opportunities')}
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 ${
+                    currentTab === 'opportunities' ? 'bg-white/10 text-white border border-white/10' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  {t.opportunities}
+                </button>
+              )}
 
               {user.role === 'ADMIN' && (
                 <button

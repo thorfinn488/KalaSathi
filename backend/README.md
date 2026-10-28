@@ -116,6 +116,21 @@ The compact order-management schema, stock and order-total triggers, `fn_place_o
 psql -d your_disposable_database -f scripts/order_management_demo.sql
 ```
 
+## Order API Development
+Reset the dedicated development database and reapply the API role grants. Run these commands from the backend folder:
+```powershell
+Set-Location 'C:\Users\drsen\.gemini\antigravity\scratch\sih26090\backend'
+& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -h 127.0.0.1 -p 5433 -U postgres -d kalasathi_test -w -X -v ON_ERROR_STOP=1 -f scripts\order_management_demo.sql
+& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -h 127.0.0.1 -p 5433 -U postgres -d kalasathi_test -w -X -v ON_ERROR_STOP=1 -f scripts\order_api_grants.sql
+```
+Start the separate API on loopback from the backend folder:
+```powershell
+Set-Location 'C:\Users\drsen\.gemini\antigravity\scratch\sih26090\backend'
+$env:ORDER_DATABASE_URL = 'postgresql://order_api@127.0.0.1:5433/kalasathi_test'
+python -m uvicorn order_api.main:app --host 127.0.0.1 --port 8001
+```
+In the frontend environment, set VITE_SHOW_ORDER_DASHBOARD and VITE_ENABLE_ORDER_API to true together to show the order dashboard and enable the /demo-api development proxy. Both flags default to off. VITE values are visible in the browser bundle and are not access control. The order API has no authentication yet, so keep both flags off for shared or networked use.
+
 ---
 
 ## Detailed Documentation
