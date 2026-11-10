@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Radio } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store } from 'lucide-react';
 
 interface NavbarProps {
   currentTab: string;
@@ -15,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
   const navItems = [
+    { id: 'marketplace', label: 'Explore Crafts', icon: Store, visible: true },
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
     { id: 'order-dashboard', label: 'Order Analytics', icon: BarChart3, visible: Boolean(user) && showOrderDashboard },
     { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
@@ -31,9 +32,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
             className="flex items-center gap-3 cursor-pointer select-none group"
             role="button"
             tabIndex={0}
-            aria-label="Go to dashboard"
-            onClick={() => setCurrentTab('dashboard')}
-            onKeyDown={(event) => event.key === 'Enter' && setCurrentTab('dashboard')}
+            aria-label="Go to marketplace"
+            onClick={() => setCurrentTab(user ? 'dashboard' : 'marketplace')}
+            onKeyDown={(event) => event.key === 'Enter' && setCurrentTab(user ? 'dashboard' : 'marketplace')}
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
               क
@@ -50,67 +51,79 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           </div>
 
           {/* Navigation Links */}
-          {user && (
-            <nav className="hidden md:flex items-center gap-1.5 bg-white/[0.03] border border-white/10 p-1 rounded-2xl">
-              <button
-                onClick={() => setCurrentTab('dashboard')}
-                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
-                  currentTab === 'dashboard' ? 'bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                {t.dashboard}
-              </button>
+          <nav className="hidden md:flex items-center gap-1.5 bg-white/[0.03] border border-white/10 p-1 rounded-2xl">
+            <button
+              onClick={() => setCurrentTab('marketplace')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                currentTab === 'marketplace' ? 'bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Store className="w-3.5 h-3.5 text-amber-400" />
+              Explore Crafts
+            </button>
 
-              {showOrderDashboard && (
+            {user && (
+              <>
                 <button
-                  onClick={() => setCurrentTab('order-dashboard')}
+                  onClick={() => setCurrentTab('dashboard')}
                   className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
-                    currentTab === 'order-dashboard' ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    currentTab === 'dashboard' ? 'bg-white/10 text-white border border-white/20' : 'text-white/60 hover:bg-white/5 hover:text-white'
                   }`}
                 >
-                  <BarChart3 className="w-3.5 h-3.5" />
-                  Order Analytics
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  {t.dashboard}
                 </button>
-              )}
 
-              {(user.role === 'ARTISAN' || user.role === 'ADMIN') && (
-                <button
-                  onClick={() => setCurrentTab('add-product')}
-                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
-                    currentTab === 'add-product' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black shadow-md' : 'text-amber-300 hover:bg-amber-500/10'
-                  }`}
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  {t.addProduct}
-                </button>
-              )}
+                {showOrderDashboard && (
+                  <button
+                    onClick={() => setCurrentTab('order-dashboard')}
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                      currentTab === 'order-dashboard' ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    Order Analytics
+                  </button>
+                )}
 
-              {(user.role === 'BUYER' || user.role === 'ADMIN') && (
-                <button
-                  onClick={() => setCurrentTab('opportunities')}
-                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
-                    currentTab === 'opportunities' ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  {t.opportunities}
-                </button>
-              )}
+                {(user.role === 'ARTISAN' || user.role === 'ADMIN') && (
+                  <button
+                    onClick={() => setCurrentTab('add-product')}
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                      currentTab === 'add-product' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black shadow-md' : 'text-amber-300 hover:bg-amber-500/10'
+                    }`}
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    {t.addProduct}
+                  </button>
+                )}
 
-              {user.role === 'ADMIN' && (
-                <button
-                  onClick={() => setCurrentTab('admin')}
-                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
-                    currentTab === 'admin' ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Admin Panel
-                </button>
-              )}
-            </nav>
-          )}
+                {(user.role === 'BUYER' || user.role === 'ADMIN') && (
+                  <button
+                    onClick={() => setCurrentTab('opportunities')}
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                      currentTab === 'opportunities' ? 'bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    {t.opportunities}
+                  </button>
+                )}
+
+                {user.role === 'ADMIN' && (
+                  <button
+                    onClick={() => setCurrentTab('admin')}
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                      currentTab === 'admin' ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Admin Panel
+                  </button>
+                )}
+              </>
+            )}
+          </nav>
 
           {/* User Controls & Language Toggle */}
           <div className="flex items-center gap-2 sm:gap-3">
@@ -141,35 +154,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentTab('login')}
-                  className="rounded-xl px-3 py-1.5 text-xs font-bold text-white/70 hover:bg-white/5 hover:text-white"
+                  className="rounded-xl px-3 py-1.5 text-xs font-bold text-white/80 hover:bg-white/5 hover:text-white"
                 >
                   {t.login}
                 </button>
                 <button
-                  onClick={() => setCurrentTab('register')}
-                  className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-1.5 text-xs font-black text-slate-950 shadow-md shadow-orange-500/20 transition hover:brightness-110"
+                  onClick={() => setCurrentTab('login')}
+                  className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-1.5 text-xs font-black text-slate-950 shadow-md shadow-orange-500/20 transition hover:brightness-110 flex items-center gap-1"
                 >
-                  {t.register}
+                  <Sparkles className="w-3 h-3" /> Artisan Studio
                 </button>
               </div>
             )}
 
-            {user && (
-              <button
-                type="button"
-                className="rounded-xl border border-white/10 p-2 text-white/75 md:hidden"
-                aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen(!menuOpen)}
-              >
-                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </button>
-            )}
+            <button
+              type="button"
+              className="rounded-xl border border-white/10 p-2 text-white/75 md:hidden"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
       </div>
 
-      {user && menuOpen && (
+      {menuOpen && (
         <nav className="mobile-nav border-t border-white/10 px-4 py-3 md:hidden space-y-1 bg-slate-950/95" aria-label="Mobile navigation">
           {navItems.map(({ id, label, icon: Icon }) => (
             <button
@@ -183,6 +194,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <Icon className="h-4 w-4" />{label}
             </button>
           ))}
+          {!user && (
+            <button
+              type="button"
+              onClick={() => { setCurrentTab('login'); setMenuOpen(false); }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-black bg-amber-500 text-slate-950 mt-2"
+            >
+              <Sparkles className="w-4 h-4" /> Sign In / Studio Access
+            </button>
+          )}
         </nav>
       )}
     </header>

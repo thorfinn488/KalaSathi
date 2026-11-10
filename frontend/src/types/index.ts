@@ -83,11 +83,16 @@ export interface ProductDetail {
   product_id: string;
   id?: string;
   artisan_id: string;
+  artisan_name?: string;
+  region?: string;
   status: 'DRAFT' | 'PROCESSING' | 'READY' | 'PUBLISHED' | 'FAILED';
   created_at: string;
   image_url?: string;
   images: ProductImage[];
   audio: ProductAudio[];
+  heritage_story?: string;
+  moq?: number;
+  lead_time_days?: number;
   catalogue?: Catalogue;
   price?: Price;
   pricing?: {

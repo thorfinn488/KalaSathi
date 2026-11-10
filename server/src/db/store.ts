@@ -16,11 +16,16 @@ export interface UserRecord {
 export interface ProductRecord {
   product_id: string;
   artisan_id: string;
+  artisan_name?: string;
+  region?: string;
   status: 'DRAFT' | 'PROCESSING' | 'READY' | 'PUBLISHED' | 'FAILED';
   created_at: string;
   image_url?: string;
   images: { id: string; url: string }[];
   audio: { id: string; url: string }[];
+  heritage_story?: string;
+  moq?: number;
+  lead_time_days?: number;
   catalogue?: {
     id?: string;
     product_id?: string;
@@ -59,6 +64,8 @@ export interface OpportunityRecord {
   match_score: number;
   status: string;
   requirement: string;
+  quantity?: number;
+  budget?: string;
 }
 
 // In-Memory persistent data store
@@ -100,23 +107,29 @@ export const products: ProductRecord[] = [
   {
     product_id: 'prod_madhubani_tree',
     artisan_id: 'usr_artisan_sunita',
+    artisan_name: 'Sunita Devi',
+    region: 'Madhubani, Bihar',
     status: 'READY',
     created_at: new Date('2026-03-01').toISOString(),
     image_url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80',
     images: [
       { id: 'img_1', url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80' },
+      { id: 'img_1b', url: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=800&auto=format&fit=crop&q=80' },
     ],
     audio: [
       { id: 'aud_1', url: '/static/audio/sample_audio.mp3' },
     ],
+    heritage_story: 'Practiced across 4 generations in Jitwarpur village. Painted with crushed bougainvillea, turmeric paste, and soot mixed with acacia gum on unbleached handmade cotton pulp paper.',
+    moq: 15,
+    lead_time_days: 14,
     catalogue: {
       id: 'cat_1',
       product_id: 'prod_madhubani_tree',
       name: 'Tree of Life - Madhubani Folk Art on Handmade Rice Paper',
-      category: 'Painting & Wall Decor',
+      category: 'Paintings & Wall Art',
       material: 'Organic vegetable dyes, Handmade Rice Paper',
       craft: 'Mithila / Kachni Technique',
-      description: 'Hand-painted masterpiece depicting the sacred Tree of Life, crafted using natural twigs, organic charcoal, turmeric, and indigo extracts.',
+      description: 'Hand-painted masterpiece depicting the sacred Tree of Life, crafted using natural bamboo twigs, organic charcoal, turmeric, and indigo extracts.',
       tags: ['GI Tagged', '100% Organic', 'Fair Trade Certified', 'Export Ready'],
     },
     price: {
@@ -149,6 +162,8 @@ export const products: ProductRecord[] = [
   {
     product_id: 'prod_blue_pottery_vase',
     artisan_id: 'usr_artisan_sunita',
+    artisan_name: 'Kailash Chand & Guild',
+    region: 'Kot Jewar, Jaipur, Rajasthan',
     status: 'READY',
     created_at: new Date('2026-03-05').toISOString(),
     image_url: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=800&auto=format&fit=crop&q=80',
@@ -156,15 +171,18 @@ export const products: ProductRecord[] = [
       { id: 'img_2', url: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=800&auto=format&fit=crop&q=80' },
     ],
     audio: [],
+    heritage_story: 'A Turko-Persian craft revived by Maharaja Sawai Ram Singh II. Contains zero clay; molded from Egyptian paste composed of ground quartz, Katira gond gum, and natural minerals fired at 850°C.',
+    moq: 25,
+    lead_time_days: 21,
     catalogue: {
       id: 'cat_2',
       product_id: 'prod_blue_pottery_vase',
       name: 'Jaipur Blue Pottery Persian Floral Urn Vase',
-      category: 'Ceramics & Pottery',
+      category: 'Ceramics & Vases',
       material: 'Quartz powder, Raw Glass, Fuller Earth',
       craft: 'Jaipur Glazed Blue Pottery',
-      description: 'No clay used. Made from crushed quartz and fired once at low heat with classic cobalt and copper oxide floral patterns.',
-      tags: ['Traditional Craft', 'Lead-Free Glaze', 'Eco-Conscious'],
+      description: 'No clay used. Made from crushed quartz and fired once at low heat with classic cobalt oxide and copper oxide floral arabesque patterns.',
+      tags: ['GI Tagged', 'Lead-Free Glaze', 'Eco-Conscious', 'Hand-Painted'],
     },
     price: {
       suggested_price: 2450,
@@ -190,6 +208,8 @@ export const products: ProductRecord[] = [
   {
     product_id: 'prod_channapatna_toy',
     artisan_id: 'usr_artisan_sunita',
+    artisan_name: 'Syed Noor & Family',
+    region: 'Channapatna (Gombegala Ooru), Karnataka',
     status: 'READY',
     created_at: new Date('2026-03-08').toISOString(),
     image_url: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&auto=format&fit=crop&q=80',
@@ -197,15 +217,18 @@ export const products: ProductRecord[] = [
       { id: 'img_3', url: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&auto=format&fit=crop&q=80' },
     ],
     audio: [],
+    heritage_story: 'Originated during the reign of Tipu Sultan who invited Persian masters to train local artisans. Buffed on high-speed foot lathe using prickly pandanus leaves for a glass-like organic polish.',
+    moq: 50,
+    lead_time_days: 10,
     catalogue: {
       id: 'cat_3',
       product_id: 'prod_channapatna_toy',
       name: 'Channapatna Wooden Stacking Toy Train',
-      category: 'Toys & Collectibles',
-      material: 'Wrightia Tinctoria Wood, Vegetable Lacquer',
+      category: 'Eco Toys & Collectibles',
+      material: 'Wrightia Tinctoria (Ivory Wood), Vegetable Lacquer',
       craft: 'Channapatna Lacquerware Woodcraft',
-      description: 'Safe, non-toxic organic lacquer toys polished on high-speed lathe using cactus leaves for brilliant natural gloss.',
-      tags: ['Non-Toxic', 'Child Safe', 'GI Tagged', 'Sustainable Wood'],
+      description: 'Safe, non-toxic organic lacquer toys made from seasoned softwood and vegetable-derived food-grade natural pigments (turmeric, indigo, kumkum).',
+      tags: ['Non-Toxic', 'Child Safe (EN71)', 'GI Tagged', 'Sustainable Wood'],
     },
     price: {
       suggested_price: 1150,
@@ -221,6 +244,84 @@ export const products: ProductRecord[] = [
       },
     ],
   },
+  {
+    product_id: 'prod_dhokra_horse',
+    artisan_id: 'usr_artisan_sunita',
+    artisan_name: 'Manglu Kashyap',
+    region: 'Bastar, Chhattisgarh',
+    status: 'READY',
+    created_at: new Date('2026-03-10').toISOString(),
+    image_url: 'https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?w=800&auto=format&fit=crop&q=80',
+    images: [
+      { id: 'img_4', url: 'https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?w=800&auto=format&fit=crop&q=80' },
+    ],
+    audio: [],
+    heritage_story: 'Ancient non-ferrous metal casting using the 4,000-year-old lost-wax technique (Cire Perdue) dating back to the Mohenjo-Daro Dancing Girl figurine. Every single mold is broken during casting, guaranteeing uniqueness.',
+    moq: 20,
+    lead_time_days: 25,
+    catalogue: {
+      id: 'cat_4',
+      product_id: 'prod_dhokra_horse',
+      name: 'Bastar Tribal Dhokra Lost-Wax Bell-Metal Steed',
+      category: 'Metal Sculptures',
+      material: 'Recycled Bell Metal & Pure Beeswax',
+      craft: 'Bastar Dhokra Lost-Wax Casting',
+      description: 'Hand-threaded wax filaments molded around anthill clay core and fired in pit kilns. Intricate folk motifs honoring tribal forest guardian spirits.',
+      tags: ['Ancient Craft (4000 yrs)', 'One-of-a-Kind', 'GI Tagged', 'Solid Brass Alloy'],
+    },
+    price: {
+      suggested_price: 4600,
+      price_range: [4100, 5200],
+      explanation: 'Reflects unrepeatable individual mold breakdown, beeswax artisan sculpting, and high metal density.',
+    },
+    opportunities: [
+      {
+        buyer_name: 'Taj Khazana Boutiques',
+        match_score: 96,
+        location: 'New Delhi, India',
+        requirement: 'Authentic museum-grade tribal bronzes for heritage hotel galleries.',
+      },
+    ],
+  },
+  {
+    product_id: 'prod_pashmina_stole',
+    artisan_id: 'usr_artisan_sunita',
+    artisan_name: 'Bashir Ahmad Wani',
+    region: 'Srinagar, Jammu & Kashmir',
+    status: 'READY',
+    created_at: new Date('2026-03-12').toISOString(),
+    image_url: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&auto=format&fit=crop&q=80',
+    images: [
+      { id: 'img_5', url: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=800&auto=format&fit=crop&q=80' },
+    ],
+    audio: [],
+    heritage_story: 'Handspun from the delicate underfleece of Changthangi mountain goats in Ladakh at 14,000 ft altitude. Embroidered using single-strand needlework (Sozni) over 4 months.',
+    moq: 10,
+    lead_time_days: 30,
+    catalogue: {
+      id: 'cat_5',
+      product_id: 'prod_pashmina_stole',
+      name: 'Kashmiri Hand-Woven Pashmina Sozni Stole',
+      category: 'Textiles & Shawls',
+      material: '100% Pure Changthangi Cashmere Wool',
+      craft: 'Kashmir Handloom Pashmina & Sozni Needlework',
+      description: 'Ultra-soft featherweight authentic pashmina hand-woven on traditional wooden looms and finished with intricate Paisley borders.',
+      tags: ['GI Certified Kashmir Pashmina', 'Ultra-Soft (12-15 microns)', 'Pure Cashmere', 'Heirloom Quality'],
+    },
+    price: {
+      suggested_price: 16500,
+      price_range: [14800, 18500],
+      explanation: 'Rare highland wool raw material certified under Pashmina Testing Quality Standards with 120 hours of hand embroidery.',
+    },
+    opportunities: [
+      {
+        buyer_name: 'Harrods Artisan Selection',
+        match_score: 97,
+        location: 'London, UK',
+        requirement: 'Export-grade certified Cashmere stoles with verifiable GI provenance testing certificates.',
+      },
+    ],
+  },
 ];
 
 export const opportunities: OpportunityRecord[] = [
@@ -232,6 +333,8 @@ export const opportunities: OpportunityRecord[] = [
     match_score: 96,
     status: 'ACTIVE',
     requirement: 'Urgent requirement for 150 authentic folk paintings for national Diwali catalog. Direct procurement with guaranteed upfront 40% advance.',
+    quantity: 150,
+    budget: '₹5,50,000',
   },
   {
     opportunity_id: 'opp_2',
@@ -241,6 +344,8 @@ export const opportunities: OpportunityRecord[] = [
     match_score: 92,
     status: 'ACTIVE',
     requirement: 'Export order for 250 handcrafted ceramic vases with export packing for London boutique distribution.',
+    quantity: 250,
+    budget: '£6,000',
   },
   {
     opportunity_id: 'opp_3',
@@ -250,6 +355,8 @@ export const opportunities: OpportunityRecord[] = [
     match_score: 88,
     status: 'ACTIVE',
     requirement: 'Bulk corporate gifting order: 500 sets of traditional lacquerware handcrafted wooden games.',
+    quantity: 500,
+    budget: '₹4,75,000',
   },
 ];
 
