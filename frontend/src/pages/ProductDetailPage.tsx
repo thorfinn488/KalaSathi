@@ -47,8 +47,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
         setEditName(prodData.catalogue?.name || '');
         setEditDesc(prodData.catalogue?.description || '');
 
-        const oppData = await apiRequest<{ opportunities: Opportunity[] }>(`/products/${productId}/opportunities`);
-        setOpportunities(oppData.opportunities || prodData.opportunities || []);
+        try {
+          const oppData = await apiRequest<{ opportunities: Opportunity[] }>(`/products/${productId}/opportunities`);
+          setOpportunities(oppData.opportunities || prodData.opportunities || []);
+        } catch {
+          setOpportunities(prodData.opportunities || []);
+        }
       } catch (err: any) {
         setError(err.message || 'Failed to load product details.');
       } finally {
@@ -120,7 +124,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
   };
 
   if (loading) return <div className="text-center py-20 text-slate-400">Loading product details...</div>;
-  if (error || !product) return <div className="text-center py-20 text-red-500 font-bold">{error || 'Product not found'}</div>;
+  if (error || !product) {
+    return (
+      <div className="max-w-md mx-auto my-20 p-8 rounded-3xl bg-slate-900 border border-red-500/30 text-center space-y-4 shadow-2xl">
+        <div className="w-12 h-12 mx-auto rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
+          <ArrowLeft className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold text-white">Product Unavailable</h3>
+        <p className="text-xs text-red-300/90">{error || 'This craft product could not be loaded.'}</p>
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-md"
+        >
+          <ArrowLeft className="w-4 h-4" /> Return to Catalog
+        </button>
+      </div>
+    );
+  }
 
   const priceObj = product.price || {
     suggested_price: product.pricing?.suggested_price || 0,

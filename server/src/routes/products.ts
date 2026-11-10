@@ -40,6 +40,83 @@ productsRouter.get('/:id', (req: Request, res: Response) => {
   return sendSuccess(res, product);
 });
 
+// Get product opportunities
+productsRouter.get('/:id/opportunities', (req: Request, res: Response) => {
+  const product = products.find((p) => p.product_id === req.params.id);
+  if (!product) {
+    return sendError(res, 'Product not found', 'NOT_FOUND', 404);
+  }
+  return sendSuccess(res, {
+    opportunities: product.opportunities || [],
+  });
+});
+
+// Update product catalogue details
+productsRouter.put('/:id/catalogue', (req: Request, res: Response) => {
+  const product = products.find((p) => p.product_id === req.params.id);
+  if (!product) {
+    return sendError(res, 'Product not found', 'NOT_FOUND', 404);
+  }
+
+  const { name, description, category, craft, material, tags } = req.body;
+  if (!product.catalogue) {
+    product.catalogue = {
+      id: `cat_${Date.now()}`,
+      product_id: product.product_id,
+      name: name || 'Handcrafted Heritage Art Piece',
+      category: category || 'Paintings & Wall Art',
+      material: material || 'Organic Natural Pigments & Paper',
+      craft: craft || 'Traditional Indian Craftsmanship',
+      description: description || 'Artisan handmade authentic piece.',
+      tags: tags || ['Handmade', 'GI Certified'],
+    };
+  } else {
+    if (name) product.catalogue.name = name;
+    if (description) product.catalogue.description = description;
+    if (category) product.catalogue.category = category;
+    if (craft) product.catalogue.craft = craft;
+    if (material) product.catalogue.material = material;
+    if (tags) product.catalogue.tags = tags;
+  }
+
+  return sendSuccess(res, product);
+});
+
+// Recalculate fair-trade price
+productsRouter.post('/:id/recalculate-price', (req: Request, res: Response) => {
+  const product = products.find((p) => p.product_id === req.params.id);
+  if (!product) {
+    return sendError(res, 'Product not found', 'NOT_FOUND', 404);
+  }
+
+  const mat = Number(req.body.material_cost) || 650;
+  const days = Number(req.body.days_to_make) || 5;
+  const complexity = req.body.complexity || 'medium';
+  const dailyWage = 480; // regional fair wage benchmark
+  const multiplier = complexity === 'high' ? 1.45 : complexity === 'low' ? 1.15 : 1.28;
+  const labor = days * dailyWage;
+  const suggested = Math.round((mat + labor) * multiplier);
+  const low = Math.round(suggested * 0.9);
+  const high = Math.round(suggested * 1.15);
+
+  const updatedPricing = {
+    suggested_price: suggested,
+    price_range: [low, high],
+    explanation: `Priced transparently: Material cost (₹${mat.toLocaleString('en-IN')}) + Fair Artisan Wage (${days} days @ ₹${dailyWage}/day) with ${complexity} complexity margin.`,
+  };
+
+  product.price = updatedPricing as any;
+  product.pricing = {
+    id: `prc_${Date.now()}`,
+    suggested_price: suggested,
+    price_range_low: low,
+    price_range_high: high,
+    explanation: updatedPricing.explanation,
+  };
+
+  return sendSuccess(res, updatedPricing);
+});
+
 // Upload image
 productsRouter.post('/:id/image', upload.single('file'), (req: Request, res: Response) => {
   const product = products.find((p) => p.product_id === req.params.id);
