@@ -3,7 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { ProductDetail, Opportunity } from '../types';
 import { apiRequest, resolveAssetUrl } from '../api/client';
-import { ArrowLeft, Edit3, IndianRupee, Tag, Building2, MapPin, Sparkles, CheckCircle2, ShieldCheck, Volume2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Edit3, IndianRupee, Tag, Building2, MapPin, Sparkles, CheckCircle2, ShieldCheck, Volume2, ChevronDown, ChevronUp, Award, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { B2BQuoteModal } from '../components/B2BQuoteModal';
+import { SampleOrderModal } from '../components/SampleOrderModal';
+import { ProvenanceCertificateModal } from '../components/ProvenanceCertificateModal';
 
 interface ProductDetailPageProps {
   productId: string;
@@ -29,6 +32,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
   const [complexity, setComplexity] = useState<'low' | 'medium' | 'high'>('medium');
   const [savingPrice, setSavingPrice] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
+
+  // Commercial action modals
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showSampleModal, setShowSampleModal] = useState(false);
+  const [showCertModal, setShowCertModal] = useState(false);
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadDetail() {
@@ -150,6 +159,37 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
               <span className="text-xs font-extrabold uppercase text-slate-500">Status</span>
               <span className="px-3 py-1 bg-emerald-500 text-white rounded-full text-xs font-bold">{product.status}</span>
             </div>
+          </div>
+
+          {/* Direct Commercial Actions */}
+          <div className="bg-slate-900 rounded-3xl border border-white/10 p-5 space-y-3 text-white shadow-xl">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Procurement Actions</span>
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                100% Escrow Protected
+              </span>
+            </div>
+
+            <button
+              onClick={() => setShowSampleModal(true)}
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-md transition-all flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="w-4 h-4" /> Order Sample Piece (₹{priceObj.suggested_price.toLocaleString('en-IN')})
+            </button>
+
+            <button
+              onClick={() => setShowQuoteModal(true)}
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-md transition-all flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="w-4 h-4" /> Request B2B Wholesale Proposal
+            </button>
+
+            <button
+              onClick={() => setShowCertModal(true)}
+              className="w-full py-2.5 px-4 rounded-xl border border-amber-400/30 bg-amber-500/5 hover:bg-amber-500/15 text-amber-300 font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              <Award className="w-4 h-4" /> View GI Provenance Certificate
+            </button>
           </div>
 
           {product.audio && product.audio.length > 0 && (
@@ -430,6 +470,36 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
             </div>
           </div>
         </div>
+      )}
+      {/* B2B Quote Modal */}
+      {showQuoteModal && product && (
+        <B2BQuoteModal
+          product={product}
+          onClose={() => setShowQuoteModal(false)}
+          onSuccess={() => {
+            setShowQuoteModal(false);
+            alert('Quotation Request Transmitted! Our artisan cluster desk is preparing your proposal.');
+          }}
+        />
+      )}
+
+      {/* Sample Order Modal */}
+      {showSampleModal && product && (
+        <SampleOrderModal
+          product={product}
+          onClose={() => setShowSampleModal(false)}
+          onSuccess={() => {
+            setShowSampleModal(false);
+          }}
+        />
+      )}
+
+      {/* Provenance Certificate Modal */}
+      {showCertModal && product && (
+        <ProvenanceCertificateModal
+          product={product}
+          onClose={() => setShowCertModal(false)}
+        />
       )}
     </div>
   );

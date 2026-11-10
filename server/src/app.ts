@@ -7,6 +7,7 @@ import { authRouter } from './routes/auth.js';
 import { dashboardRouter } from './routes/dashboard.js';
 import { productsRouter } from './routes/products.js';
 import { opportunitiesRouter } from './routes/opportunities.js';
+import { ordersRouter } from './routes/orders.js';
 import { demoApiRouter } from './routes/demoApi.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,6 +29,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/opportunities', opportunitiesRouter);
+app.use('/api/orders', ordersRouter);
 
 // Order dashboard demo API
 app.use('/demo-api', demoApiRouter);

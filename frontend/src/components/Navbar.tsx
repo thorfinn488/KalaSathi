@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store, Truck } from 'lucide-react';
+import { OrderTrackModal } from './OrderTrackModal';
 
 interface NavbarProps {
   currentTab: string;
@@ -12,6 +13,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showTrackModal, setShowTrackModal] = useState(false);
   const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
   const navItems = [
@@ -127,6 +129,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
 
           {/* User Controls & Language Toggle */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Track Order Button */}
+            <button
+              onClick={() => setShowTrackModal(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1.5 text-xs font-bold text-cyan-200 transition-all hover:bg-cyan-500/20 sm:px-3"
+            >
+              <Truck className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Track Order</span>
+            </button>
+
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
@@ -205,6 +216,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           )}
         </nav>
       )}
+
+      {showTrackModal && <OrderTrackModal onClose={() => setShowTrackModal(false)} />}
     </header>
   );
 };

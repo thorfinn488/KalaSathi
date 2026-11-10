@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ProductDetail } from '../types';
 import { apiRequest, resolveAssetUrl } from '../api/client';
 import { B2BQuoteModal } from '../components/B2BQuoteModal';
-import { Sparkles, MapPin, ShieldCheck, IndianRupee, ShoppingBag, ArrowRight, Layers, Award, CheckCircle, Search, Filter, Palette, Truck, HelpCircle, User } from 'lucide-react';
+import { SampleOrderModal } from '../components/SampleOrderModal';
+import { Sparkles, MapPin, ShieldCheck, IndianRupee, ShoppingBag, ArrowRight, Layers, Award, CheckCircle, Search, Filter, Palette, Truck, HelpCircle, User, ShoppingCart } from 'lucide-react';
 
 interface PublicMarketplacePageProps {
   onSelectProduct: (productId: string) => void;
@@ -15,6 +16,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({ on
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [quoteProduct, setQuoteProduct] = useState<ProductDetail | null>(null);
+  const [sampleProduct, setSampleProduct] = useState<ProductDetail | null>(null);
   const [quoteSuccessMsg, setQuoteSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -253,18 +255,18 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({ on
                   <div className="grid grid-cols-2 gap-2 pt-2">
                     <button
                       type="button"
-                      onClick={() => onSelectProduct(prod.product_id || prod.id || '')}
-                      className="py-2.5 px-3 rounded-xl border border-white/15 hover:bg-white/10 text-white font-bold text-xs transition-all text-center"
+                      onClick={() => setSampleProduct(prod)}
+                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-md transition-all text-center flex items-center justify-center gap-1 active:scale-95"
                     >
-                      Inspect Details
+                      <ShoppingCart className="w-3.5 h-3.5" /> Buy Sample
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setQuoteProduct(prod)}
-                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-md transition-all text-center flex items-center justify-center gap-1"
+                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs shadow-md transition-all text-center flex items-center justify-center gap-1 active:scale-95"
                     >
-                      Request Quote
+                      <ShoppingBag className="w-3.5 h-3.5" /> Wholesale RFQ
                     </button>
                   </div>
                 </div>
@@ -312,6 +314,19 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({ on
             setQuoteProduct(null);
             setQuoteSuccessMsg(`RFQ for ${quote.quantity} units sent to ${quoteProduct.artisan_name || 'artisan cluster'}!`);
             setTimeout(() => setQuoteSuccessMsg(null), 5000);
+          }}
+        />
+      )}
+
+      {/* Sample Order Modal */}
+      {sampleProduct && (
+        <SampleOrderModal
+          product={sampleProduct}
+          onClose={() => setSampleProduct(null)}
+          onSuccess={(order) => {
+            setSampleProduct(null);
+            setQuoteSuccessMsg(`Sample order #${order.order_id} placed! Tracking is now active.`);
+            setTimeout(() => setQuoteSuccessMsg(null), 6000);
           }}
         />
       )}

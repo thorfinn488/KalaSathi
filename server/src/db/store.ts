@@ -361,3 +361,59 @@ export const opportunities: OpportunityRecord[] = [
 ];
 
 export const processingJobs = new Map<string, { step: string; progress: number; status: 'PROCESSING' | 'READY' | 'FAILED' }>();
+
+export interface OrderRecord {
+  order_id: string;
+  product_id: string;
+  product_name: string;
+  artisan_name: string;
+  customer_name: string;
+  customer_phone: string;
+  shipping_address: string;
+  quantity: number;
+  unit_price: number;
+  total_amount: number;
+  payment_method: string;
+  payment_status: 'PAID' | 'ESCROW_HELD' | 'PENDING';
+  delivery_status: 'CRAFTING' | 'QUALITY_CHECK' | 'SHIPPED' | 'DELIVERED';
+  created_at: string;
+  estimated_delivery: string;
+}
+
+export const orders: OrderRecord[] = [
+  {
+    order_id: 'KS-98421',
+    product_id: 'prod_madhubani_tree',
+    product_name: 'Tree of Life - Madhubani Folk Art on Handmade Rice Paper',
+    artisan_name: 'Sunita Devi',
+    customer_name: 'Ramesh Mehra',
+    customer_phone: '9811122233',
+    shipping_address: 'Flat 402, Lotus Towers, Indiranagar, Bengaluru 560038',
+    quantity: 1,
+    unit_price: 3850,
+    total_amount: 3850,
+    payment_method: 'UPI (PhonePe)',
+    payment_status: 'PAID',
+    delivery_status: 'SHIPPED',
+    created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+    estimated_delivery: new Date(Date.now() + 4 * 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+  },
+  {
+    order_id: 'KS-98422',
+    product_id: 'prod_blue_pottery_vase',
+    product_name: 'Jaipur Blue Pottery Persian Floral Urn Vase',
+    artisan_name: 'Kailash Chand & Guild',
+    customer_name: 'Ananya Sharma',
+    customer_phone: '9822233344',
+    shipping_address: '12-B, Malabar Hill, Walkeshwar Road, Mumbai 400006',
+    quantity: 2,
+    unit_price: 2450,
+    total_amount: 4900,
+    payment_method: 'Credit Card (Razorpay)',
+    payment_status: 'PAID',
+    delivery_status: 'QUALITY_CHECK',
+    created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+    estimated_delivery: new Date(Date.now() + 6 * 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+  },
+];
+
