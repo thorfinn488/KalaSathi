@@ -1,11 +1,23 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { users, products, opportunities } from '../db/store.js';
-import { sendSuccess } from '../utils/response.js';
+import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.js';
+import { sendSuccess, sendError } from '../utils/response.js';
 
 export const adminRouter = Router();
 
+// Middleware: Require ADMIN role
+const requireAdmin = (req: AuthenticatedRequest, res: Response, next: () => void) => {
+  if (req.user?.role !== 'ADMIN') {
+    return sendError(res, 'Access forbidden. Administrator role required.', 'FORBIDDEN', 403);
+  }
+  next();
+};
+
+adminRouter.use(authMiddleware);
+adminRouter.use(requireAdmin);
+
 // List registered artisans
-adminRouter.get('/artisans', (_req: Request, res: Response) => {
+adminRouter.get('/artisans', (_req: AuthenticatedRequest, res: Response) => {
   const artisans = users
     .filter((u) => u.role === 'ARTISAN')
     .map((u) => ({
@@ -19,7 +31,7 @@ adminRouter.get('/artisans', (_req: Request, res: Response) => {
 });
 
 // List catalogued products for admin overview
-adminRouter.get('/products', (_req: Request, res: Response) => {
+adminRouter.get('/products', (_req: AuthenticatedRequest, res: Response) => {
   const adminProducts = products.map((p) => ({
     product_id: p.product_id,
     catalogue_name: p.catalogue?.name || 'Untitled Craft Piece',
@@ -31,6 +43,6 @@ adminRouter.get('/products', (_req: Request, res: Response) => {
 });
 
 // List opportunities
-adminRouter.get('/opportunities', (_req: Request, res: Response) => {
+adminRouter.get('/opportunities', (_req: AuthenticatedRequest, res: Response) => {
   return sendSuccess(res, opportunities);
 });

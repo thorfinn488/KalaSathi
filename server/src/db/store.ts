@@ -382,6 +382,23 @@ export interface OrderRecord {
 
 export const orders: OrderRecord[] = [
   {
+    order_id: 'KS-10482',
+    product_id: 'prod_madhubani_tree',
+    product_name: 'Tree of Life - Madhubani Folk Art on Handmade Rice Paper',
+    artisan_name: 'Sunita Devi',
+    customer_name: 'Pooja Iyer (Boutique Curator)',
+    customer_phone: '9899988877',
+    shipping_address: 'Artisanal Guild House, Hauz Khas Village, New Delhi 110016',
+    quantity: 1,
+    unit_price: 3850,
+    total_amount: 3850,
+    payment_method: 'UPI Escrow (Instant Sandbox)',
+    payment_status: 'PAID',
+    delivery_status: 'SHIPPED',
+    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    estimated_delivery: new Date(Date.now() + 3 * 86400000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
+  },
+  {
     order_id: 'KS-98421',
     product_id: 'prod_madhubani_tree',
     product_name: 'Tree of Life - Madhubani Folk Art on Handmade Rice Paper',

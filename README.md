@@ -1,27 +1,33 @@
 # KalaSathi
 
-AI Business Manager for Artisans. This repository is a small monorepo containing a Vite/React frontend and a FastAPI backend.
+AI Business Manager & Living Heritage Marketplace for Artisans.
 
-## Repository Layout
+## Architecture & Repository Layout
+
+This repository contains:
+1. **Frontend (`frontend/`)**: React 18, Vite, Tailwind CSS, Lucide icons, multi-language context (Hindi/English).
+2. **Unified Node.js / Express Server (`server/`)**: Express, TypeScript, Zod validation, JWT authentication, and commercial endpoints (Marketplace, Orders, B2B RFQs, Analytics, Admin). This is the default runtime used by the root `Dockerfile` and `docker-compose.yml`.
+3. **Python FastAPI Backend (`backend/`)**: FastAPI, SQLAlchemy, Pydantic, and modular image/audio processing pipelines with unit tests.
 
 ```text
 .
-├── .github/workflows/       # CI and deployment workflows
-├── backend/                 # FastAPI application, tests, scripts, and Python dependencies
-│   ├── app/                 # API, services, models, repositories, storage
-│   ├── tests/
-│   ├── .env.example         # Backend-only settings template
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/                # Vite/React application and Node dependencies
-│   ├── public/              # Frontend static assets
+├── .github/workflows/       # CI verification & optional cloud deployment workflows
+├── server/                  # Production-ready Node.js / Express TypeScript API
 │   ├── src/
-│   ├── .env.example         # Frontend-only Vite settings template
+│   │   ├── config/          # Environment schema (Zod)
+│   │   ├── db/              # In-memory and SQL-ready store & seed data
+│   │   ├── middleware/      # JWT auth & RBAC guards
+│   │   └── routes/          # /api/auth, /api/products, /api/orders, /api/opportunities, /api/admin
+├── frontend/                # Vite/React application
+│   ├── src/                 # Pages (Marketplace, Studio, Orders, Analytics, Admin), components, context
 │   └── package.json
-├── infra/                   # Deployment definitions, including ECS task definition
-├── DEPLOYMENT.md            # Production deployment and operations guide
-├── package.json             # Root development orchestration scripts
-└── .gitignore               # Shared ignore rules for both applications
+├── backend/                 # FastAPI Python backend
+│   ├── app/                 # Services, AI mocks, routes, and models
+│   └── tests/               # Pytest test suite
+├── Dockerfile               # Production multi-stage Docker build
+├── docker-compose.yml       # Containerized fullstack setup
+├── package.json             # Root orchestration scripts
+└── DEPLOYMENT.md            # Cloud deployment guide
 ```
 
 Keep frontend-only images/fonts in `frontend/public/`. Put genuinely reusable source code in a future `packages/` directory only when both apps consume it; do not share runtime code between browser and Python packages by copying files. Uploads, databases, credentials, build output, and virtual environments are local/runtime data and must not be committed.

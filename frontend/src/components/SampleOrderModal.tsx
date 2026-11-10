@@ -111,7 +111,7 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
           <>
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-300 uppercase tracking-wider mb-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Direct Artisan Purchase
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Direct Artisan Purchase · Sandbox Demo Gateway
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Order Sample Piece
