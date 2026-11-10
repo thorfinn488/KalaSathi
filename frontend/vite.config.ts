@@ -10,18 +10,15 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       proxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          target: 'http://localhost:5000',
           changeOrigin: true,
         },
-        ...(env.VITE_ENABLE_ORDER_API === 'true' ? {
-          '/demo-api': {
-            target: 'http://127.0.0.1:8001',
-            changeOrigin: true,
-            rewrite: (path: string) => path.replace(/^\/demo-api/, ''),
-          },
-        } : {}),
+        '/demo-api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
         '/static': {
-          target: 'http://localhost:8000',
+          target: 'http://localhost:5000',
           changeOrigin: true,
         },
       },
