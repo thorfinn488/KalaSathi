@@ -39,6 +39,8 @@ def validated_database_urls() -> tuple[str, str]:
 
 
 def pytest_sessionstart(session):
+    if not os.environ.get("ORDER_DATABASE_URL") and not os.environ.get("TEST_ADMIN_DATABASE_URL"):
+        return
     validated_database_urls()
 
 

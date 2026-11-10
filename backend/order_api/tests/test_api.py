@@ -6,6 +6,11 @@ from fastapi.testclient import TestClient
 
 from order_api.main import app, validate_order_database_target
 
+pytestmark = pytest.mark.skipif(
+    not os.environ.get("ORDER_DATABASE_URL"),
+    reason="ORDER_DATABASE_URL is not set (isolated PostgreSQL order demo DB required)",
+)
+
 
 def test_validator_refuses_live_database_without_override(monkeypatch):
     monkeypatch.setenv("ORDER_DATABASE_URL", "postgresql://order_api@127.0.0.1:5433/kalasathi")
