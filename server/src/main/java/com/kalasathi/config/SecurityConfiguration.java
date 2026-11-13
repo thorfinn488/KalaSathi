@@ -62,7 +62,8 @@ public class SecurityConfiguration {
                                         "FORBIDDEN", "Access forbidden for this account role.")))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/health", "/api/media/**", "/api/auth/register", "/api/auth/login")
+                        .requestMatchers("/api/health", "/actuator/health", "/api/media/**",
+                                "/api/auth/register", "/api/auth/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*",
                                 "/api/products/*/opportunities").permitAll()

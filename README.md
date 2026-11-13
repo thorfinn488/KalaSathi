@@ -1,100 +1,64 @@
 # KalaSathi
 
-AI Business Manager & Living Heritage Marketplace for Artisans.
+KalaSathi is an artisan-first business manager and living heritage marketplace for Indian craft clusters.
 
-## Architecture & Repository Layout
+## Architecture
 
-This repository contains:
-1. **Frontend (`frontend/`)**: React 18, Vite, Tailwind CSS, Lucide icons, multi-language context (Hindi/English).
-2. **Unified Node.js / Express Server (`server/`)**: Express, TypeScript, Zod validation, JWT authentication, and commercial endpoints (Marketplace, Orders, B2B RFQs, Analytics, Admin). This is the default runtime used by the root `Dockerfile` and `docker-compose.yml`.
-3. **Python FastAPI Backend (`backend/`)**: FastAPI, SQLAlchemy, Pydantic, and modular image/audio processing pipelines with unit tests.
+- `frontend/`: React, TypeScript, Vite, React Router, and TanStack Query.
+- `server/`: Java 17 and Spring Boot API, with JPA, Flyway, Spring Security, Redis, and OpenAPI documentation.
+- PostgreSQL stores application data; Redis provides caching and rate limiting.
+- `Dockerfile` and `server/Dockerfile` build the Spring API. `docker-compose.yml` runs the API, PostgreSQL 17, and Redis 7.
 
-```text
-.
-├── .github/workflows/       # CI verification & optional cloud deployment workflows
-├── server/                  # Production-ready Node.js / Express TypeScript API
-│   ├── src/
-│   │   ├── config/          # Environment schema (Zod)
-│   │   ├── db/              # In-memory and SQL-ready store & seed data
-│   │   ├── middleware/      # JWT auth & RBAC guards
-│   │   └── routes/          # /api/auth, /api/products, /api/orders, /api/opportunities, /api/admin
-├── frontend/                # Vite/React application
-│   ├── src/                 # Pages (Marketplace, Studio, Orders, Analytics, Admin), components, context
-│   └── package.json
-├── backend/                 # FastAPI Python backend
-│   ├── app/                 # Services, AI mocks, routes, and models
-│   └── tests/               # Pytest test suite
-├── Dockerfile               # Production multi-stage Docker build
-├── docker-compose.yml       # Containerized fullstack setup
-├── package.json             # Root orchestration scripts
-└── DEPLOYMENT.md            # Cloud deployment guide
-```
+The API is served under `/api`; `GET /api/health` is the application health route. Actuator exposes only `/actuator/health`.
 
-Keep frontend-only images/fonts in `frontend/public/`. Put genuinely reusable source code in a future `packages/` directory only when both apps consume it; do not share runtime code between browser and Python packages by copying files. Uploads, databases, credentials, build output, and virtual environments are local/runtime data and must not be committed.
+## Run locally
 
-## Safe File Moves
+Requirements: Docker with Compose, Java 17, Maven, and Node.js 22.
 
-The current repository already has the frontend and backend in their conventional directories, so no move is needed. If files are found at the repository root later, move tracked files with Git so the rename is recorded:
-
-```bash
-git mv app backend/app
-git mv tests backend/tests
-git mv src frontend/src
-git status --short
-git diff --cached --summary
-```
-
-Only run the commands for paths that actually exist; do not move the current `backend/app` or `frontend/src` again. Git records a rename by content similarity, so history remains discoverable with `git log --follow -- path/to/file` after commit. For untracked files, use `mkdir -p` plus `mv`, then `git add` the destination.
-
-## Environment Files
-
-Each application owns its own environment:
-
-- Copy `backend/.env.example` to `backend/.env` for FastAPI settings.
-- Copy `frontend/.env.example` to `frontend/.env.local` for Vite settings. Only `VITE_`-prefixed values are exposed to browser code; never put secrets in frontend env files.
-- Keep actual `.env` files untracked. Commit only the sanitized templates. Production values belong in the hosting provider's secret/environment manager.
-
-The local frontend uses `/api`; Vite proxies `/api` and `/static` to `http://localhost:8000`. For independently hosted production services, set `VITE_API_BASE_URL` to the API origin plus `/api`, such as `https://api.example.com/api`.
-
-## Local Development
-
-Prerequisites: Node.js 20+, npm, and Python 3.11+.
-
-Install the root process runner, then install app dependencies. The setup script creates and uses `backend/.venv` automatically. From PowerShell:
+In PowerShell, set the required local-only values in the current session:
 
 ```powershell
-npm install
-npm run setup
-Copy-Item backend\.env.example backend\.env
-Copy-Item frontend\.env.example frontend\.env.local
-npm run dev
+$env:DB_PASSWORD = Read-Host "Local Compose database password"
 ```
 
-From Bash:
+Check: `if ([string]::IsNullOrWhiteSpace($env:DB_PASSWORD)) { throw "DB_PASSWORD is missing" } else { "DB_PASSWORD is set" }`
 
-```bash
-npm install
-npm run setup
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
-npm run dev
+```powershell
+$env:JWT_SECRET = [Guid]::NewGuid().ToString('N') + [Guid]::NewGuid().ToString('N')
 ```
 
-The root `dev` script starts FastAPI on port 8000 and Vite on port 3000; stopping either process stops both. The API docs are at `http://localhost:8000/docs`.
+Check: `if ($env:JWT_SECRET.Length -lt 32) { throw "JWT_SECRET is too short" } else { "JWT_SECRET is set" }`
 
-Root commands:
+Start the services:
 
-| Command | Action |
-|---|---|
-| `npm run setup` | Install frontend dependencies and backend requirements into the active Python environment |
-| `npm run dev` | Start both development servers |
-| `npm run dev:frontend` | Start only Vite |
-| `npm run dev:backend` | Start only FastAPI |
-| `npm run build` | Build the frontend and byte-compile backend Python modules |
-| `npm test` | Run backend pytest and the frontend TypeScript check |
+```powershell
+docker compose up --build
+```
 
-The root runner always invokes `backend/.venv`, so no shell activation is needed after setup. The frontend currently has no unit-test framework; its test command performs a TypeScript check. Vite dependencies are locked in `frontend/package-lock.json`; the root `package-lock.json` locks the orchestration tooling.
+Check: `docker compose ps`
 
-## Deployment
+Open `http://localhost:8080/api/health`. PostgreSQL and Redis are available on loopback; PostgreSQL data persists in the `postgres_data` volume.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for container builds, CI/CD, hosting, DNS/TLS, database and upload persistence, observability, and production security requirements.
+For frontend development, set `VITE_API_URL` to the local API URL ending in `/api`, then run `npm ci --prefix frontend` followed by `npm run dev --prefix frontend`. Check each command's exit code with `$LASTEXITCODE`; Vite uses port 5173 by default.
+
+## Tests and builds
+
+```powershell
+mvn -f server/pom.xml test
+```
+
+Check: `$LASTEXITCODE` is `0`.
+
+```powershell
+npm run test:ui --prefix frontend
+```
+
+Check: `$LASTEXITCODE` is `0`.
+
+```powershell
+npm run build --prefix frontend
+```
+
+Check: `$LASTEXITCODE` is `0`.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Render and Vercel setup and environment variable names.
