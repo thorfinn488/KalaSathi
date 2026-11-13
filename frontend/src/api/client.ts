@@ -1,13 +1,16 @@
 import { ApiResponseEnvelope } from '../types';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 const API_CONFIGURATION_ERROR = import.meta.env.PROD && !/^https:\/\//i.test(API_BASE_URL)
-  ? 'Production API URL is not configured. Set VITE_API_BASE_URL in Vercel to the HTTPS backend URL ending in /api.'
+  ? 'Production API URL is not configured. Set VITE_API_URL in Vercel to the HTTPS backend URL ending in /api.'
   : null;
 
 export function resolveAssetUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
   if (/^(?:[a-z]+:)?\/\//i.test(path) || /^(?:data|blob):/i.test(path)) return path;
+  if (path.startsWith('/media/')) {
+    return new URL(`${API_BASE_URL}${path}`, window.location.origin).toString();
+  }
 
   const apiOrigin = new URL(API_BASE_URL, window.location.origin).origin;
   return new URL(path, apiOrigin).toString();

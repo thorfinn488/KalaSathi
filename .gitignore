@@ -10,6 +10,7 @@ node_modules/
 dist/
 **/dist/
 coverage/
+**/target/
 
 # Python environments, bytecode, and test output.
 .venv/
