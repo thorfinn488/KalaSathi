@@ -11,8 +11,9 @@ interface LoginPageProps {
 export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegister }) => {
   const { login } = useAuth();
   const { t } = useLanguage();
-  const [phone, setPhone] = useState('9811122233');
-  const [password, setPassword] = useState('Password123');
+  const showDemoProfiles = import.meta.env.DEV && import.meta.env.VITE_DEMO_MODE === 'true';
+  const [phone, setPhone] = useState(showDemoProfiles ? '9811122233' : '');
+  const [password, setPassword] = useState(showDemoProfiles ? 'Password123' : '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [activeQuickRole, setActiveQuickRole] = useState<string | null>(null);
@@ -67,6 +68,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
         )}
 
         {/* Quick 1-Click Persona Login */}
+        {showDemoProfiles && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-amber-300 flex items-center gap-1.5">
@@ -120,6 +122,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
             </button>
           </div>
         </div>
+        )}
 
         {/* Credentials Form */}
         <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
@@ -134,7 +137,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. 9811122233"
+                placeholder="Enter your phone number"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/10 bg-white/5 focus:bg-white/[0.08] focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 font-medium text-sm text-white placeholder-slate-500 transition-all outline-none"
               />
             </div>

@@ -108,7 +108,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. 9876543210"
+                placeholder="Enter your phone number"
                 className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
               />
             </div>

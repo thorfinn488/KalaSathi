@@ -330,7 +330,7 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
                     required
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="e.g. 9811122233"
+                    placeholder="Enter your phone number"
                     className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs text-white placeholder-slate-500 outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
