@@ -76,11 +76,11 @@ function MainApp() {
           />
         )}
 
-        {showOrderDashboard && currentTab === 'order-dashboard' && user && (
+        {showOrderDashboard && currentTab === 'order-dashboard' && user?.role === 'ADMIN' && (
           <OrderDashboardPage onAddProduct={() => setCurrentTab('add-product')} />
         )}
 
-        {currentTab === 'add-product' && user && (
+        {currentTab === 'add-product' && (user?.role === 'ARTISAN' || user?.role === 'ADMIN') && (
           <AddProductPage
             onComplete={(id) => {
               setSelectedProductId(id);
@@ -97,9 +97,9 @@ function MainApp() {
           />
         )}
 
-        {currentTab === 'opportunities' && user && <OpportunitiesPage />}
+        {currentTab === 'opportunities' && (user?.role === 'BUYER' || user?.role === 'ADMIN') && <OpportunitiesPage />}
 
-        {currentTab === 'admin' && user && <AdminPage />}
+        {currentTab === 'admin' && user?.role === 'ADMIN' && <AdminPage />}
       </main>
 
       <footer className="app-footer border-t border-white/10 px-5 py-8 text-xs text-white/50 bg-slate-950/80">

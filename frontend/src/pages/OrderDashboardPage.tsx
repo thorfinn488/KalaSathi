@@ -5,8 +5,8 @@ interface ArtisanProfit {
   artisan_id: string;
   artisan: string;
   revenue: number;
-  expenses: number;
-  net_profit: number;
+  expenses: number | null;
+  net_profit: number | null;
 }
 
 interface LowStockProduct {
@@ -26,7 +26,10 @@ interface DashboardData {
 const ORDER_API_BASE_URL = (import.meta.env.VITE_ORDER_API_BASE_URL || '/demo-api').replace(/\/$/, '');
 
 async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${ORDER_API_BASE_URL}${path}`);
+  const token = localStorage.getItem('sih_auth_token');
+  const response = await fetch(`${ORDER_API_BASE_URL}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   if (!response.ok) {
     throw new Error(`Request failed with HTTP ${response.status}`);
   }
@@ -135,11 +138,15 @@ export const OrderDashboardPage: React.FC<OrderDashboardPageProps> = ({ onAddPro
                       </div>
                       <div>
                         <dt className="metric-label">Expenses</dt>
-                        <dd className="mt-2 text-sm font-semibold tabular-nums text-white">{formatCurrency(artisan.expenses)}</dd>
+                        <dd className="mt-2 text-sm font-semibold tabular-nums text-white">{artisan.expenses === null ? 'Not recorded' : formatCurrency(artisan.expenses)}</dd>
                       </div>
                       <div>
                         <dt className="metric-label">Net profit</dt>
-                        <dd className="mt-2 flex items-center text-sm font-bold tabular-nums text-emerald-100"><IndianRupee className="mr-0.5 h-3.5 w-3.5" />{artisan.net_profit.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</dd>
+                        <dd className="mt-2 flex items-center text-sm font-bold tabular-nums text-emerald-100">
+                          {artisan.net_profit === null
+                            ? 'Not recorded'
+                            : <><IndianRupee className="mr-0.5 h-3.5 w-3.5" />{artisan.net_profit.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</>}
+                        </dd>
                       </div>
                     </dl>
                   </article>

@@ -1,12 +1,70 @@
 import React, { useState } from 'react';
 import { ProductDetail } from '../types';
 import { apiRequest } from '../api/client';
-import { X, CheckCircle2, ShieldCheck, IndianRupee, Truck, CreditCard, Smartphone, Lock, ArrowRight } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, IndianRupee, Truck, ArrowRight, Loader2 } from 'lucide-react';
+
+interface OrderResponse {
+  order_id: string;
+  product_name: string;
+  artisan_name: string;
+  total_amount: number;
+  estimated_delivery: string;
+  payment_status: 'PAID' | 'PENDING';
+  payment_mode?: 'sandbox' | 'razorpay';
+  checkout?: {
+    key_id: string;
+    order_id: string;
+    amount: number;
+    currency: string;
+  };
+}
+
+interface RazorpayPaymentResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayCheckout {
+  open: () => void;
+  on: (event: string, handler: (response: { error?: { description?: string } }) => void) => void;
+}
+
+interface RazorpayOptions {
+  key: string;
+  order_id: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  prefill: { name: string; contact: string };
+  handler: (response: RazorpayPaymentResponse) => void;
+  modal: { ondismiss: () => void };
+}
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => RazorpayCheckout;
+  }
+}
 
 interface SampleOrderModalProps {
   product: ProductDetail;
   onClose: () => void;
-  onSuccess: (order: any) => void;
+  onSuccess: (order: OrderResponse) => void;
+}
+
+function loadRazorpay(): Promise<void> {
+  if (window.Razorpay) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[data-razorpay-checkout]');
+    const script = existing ?? document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.dataset.razorpayCheckout = 'true';
+    script.onload = () => window.Razorpay ? resolve() : reject(new Error('Razorpay checkout did not initialize.'));
+    script.onerror = () => reject(new Error('Could not load Razorpay checkout. Check your connection and try again.'));
+    if (!existing) document.body.appendChild(script);
+  });
 }
 
 export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onClose, onSuccess }) => {
@@ -15,13 +73,54 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
   const [customerPhone, setCustomerPhone] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'Card' | 'COD'>('UPI');
   const [submitting, setSubmitting] = useState(false);
-  const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
+  const [checkoutOrder, setCheckoutOrder] = useState<OrderResponse | null>(null);
+  const [confirmedOrder, setConfirmedOrder] = useState<OrderResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const unitPrice = product.price?.suggested_price || product.pricing?.suggested_price || 2500;
+  const unitPrice = product.pricing?.suggested_price || product.price?.suggested_price || 0;
   const totalAmount = unitPrice * quantity;
+
+  const openRazorpayCheckout = async (order: OrderResponse) => {
+    if (!order.checkout) {
+      setError('The payment provider did not return checkout details. Your order remains pending.');
+      return;
+    }
+    try {
+      await loadRazorpay();
+      if (!window.Razorpay) throw new Error('Razorpay checkout is unavailable.');
+      const checkout = new window.Razorpay({
+        key: order.checkout.key_id,
+        order_id: order.checkout.order_id,
+        amount: order.checkout.amount,
+        currency: order.checkout.currency,
+        name: 'KalaSaathi',
+        description: order.product_name,
+        prefill: { name: customerName, contact: customerPhone },
+        handler: async (payment) => {
+          try {
+            const verified = await apiRequest<OrderResponse>(`/orders/${encodeURIComponent(order.order_id)}/payment/verify`, {
+              method: 'POST',
+              body: JSON.stringify(payment),
+            });
+            setConfirmedOrder(verified);
+            onSuccess(verified);
+          } catch (verificationError) {
+            setError(verificationError instanceof Error
+              ? `Payment verification failed: ${verificationError.message}. Do not retry payment; contact support with ${order.order_id}.`
+              : `Payment verification failed. Contact support with ${order.order_id}.`);
+          }
+        },
+        modal: { ondismiss: () => setError('Checkout closed; your order remains pending. You can resume payment below.') },
+      });
+      checkout.on('payment.failed', (failure) => {
+        setError(failure.error?.description || 'Payment was not completed. Your order remains pending.');
+      });
+      checkout.open();
+    } catch (checkoutError) {
+      setError(checkoutError instanceof Error ? checkoutError.message : 'Could not open payment checkout.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,18 +138,16 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
         customer_phone: customerPhone,
         shipping_address: `${address}, PIN: ${pincode}`,
         quantity,
-        payment_method: paymentMethod === 'UPI' ? 'Instant UPI (GPay/PhonePe)' : paymentMethod === 'Card' ? 'Credit/Debit Card' : 'Escrow Cash on Delivery',
       };
 
-      const res = await apiRequest<any>('/orders', {
+      const order = await apiRequest<OrderResponse>('/orders', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
-
-      setConfirmedOrder(res);
-      onSuccess(res);
+      setCheckoutOrder(order);
+      if (order.payment_mode === 'razorpay') await openRazorpayCheckout(order);
     } catch (err: any) {
-      setError(err.message || 'Payment simulation failed. Please try again.');
+      setError(err.message || 'Could not create the order. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -73,9 +170,11 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                Order Confirmed · 100% Escrow Protected
+                {confirmedOrder.payment_status === 'PAID' ? 'Payment confirmed' : 'Payment pending'}
               </span>
-              <h2 className="text-2xl font-black text-white mt-2">Sample Dispatched to Maker</h2>
+              <h2 className="text-2xl font-black text-white mt-2">
+                {confirmedOrder.payment_status === 'PAID' ? 'Sample order confirmed' : 'Order created'}
+              </h2>
               <p className="text-xs text-slate-400 mt-1">
                 Order Tracking ID: <strong className="text-amber-300 font-mono text-sm">{confirmedOrder.order_id}</strong>
               </p>
@@ -91,7 +190,7 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
                 <span className="font-bold text-amber-300">{confirmedOrder.artisan_name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Paid Amount:</span>
+                <span className="text-slate-400">Order Amount:</span>
                 <span className="font-black text-white text-sm">₹{confirmedOrder.total_amount?.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
@@ -107,11 +206,56 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
               Continue Exploring Heritage
             </button>
           </div>
+        ) : checkoutOrder ? (
+          <div className="py-8 text-center space-y-5">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-300 mx-auto flex items-center justify-center border border-amber-500/25">
+              <ShieldCheck className="w-8 h-8" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-white">Order {checkoutOrder.order_id}</h2>
+              <p className="mt-2 text-sm text-slate-300">₹{checkoutOrder.total_amount.toLocaleString('en-IN')} · Payment status: {checkoutOrder.payment_status}</p>
+              <p className="mt-2 text-xs text-slate-400">This evaluation checkout does not charge real money.</p>
+            </div>
+            {checkoutOrder.payment_mode === 'sandbox' ? (
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={async () => {
+                  setSubmitting(true);
+                  setError(null);
+                  try {
+                    const paidOrder = await apiRequest<OrderResponse>(
+                      `/orders/${encodeURIComponent(checkoutOrder.order_id)}/payment/sandbox-confirm`,
+                      { method: 'POST' },
+                    );
+                    setConfirmedOrder(paidOrder);
+                    onSuccess(paidOrder);
+                  } catch (confirmationError) {
+                    setError(confirmationError instanceof Error ? confirmationError.message : 'Sandbox payment could not be confirmed.');
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs disabled:opacity-50"
+              >
+                {submitting ? 'Confirming sandbox payment…' : 'Simulate successful sandbox payment'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void openRazorpayCheckout(checkoutOrder)}
+                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs"
+              >
+                Resume test checkout
+              </button>
+            )}
+            {error && <p className="text-xs text-rose-300" role="alert">{error}</p>}
+          </div>
         ) : (
           <>
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-300 uppercase tracking-wider mb-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Direct Artisan Purchase · Sandbox Demo Gateway
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Direct artisan purchase · test checkout
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Order Sample Piece
@@ -220,61 +364,18 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
                 />
               </div>
 
-              {/* Payment Method Selector */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Payment Method
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('UPI')}
-                    className={`p-2.5 rounded-xl border text-left text-xs font-bold transition-all ${
-                      paymentMethod === 'UPI'
-                        ? 'border-amber-400 bg-amber-500/10 text-white'
-                        : 'border-white/10 bg-white/5 text-slate-400'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4 text-amber-400 mb-1" />
-                    <span>Instant UPI</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('Card')}
-                    className={`p-2.5 rounded-xl border text-left text-xs font-bold transition-all ${
-                      paymentMethod === 'Card'
-                        ? 'border-amber-400 bg-amber-500/10 text-white'
-                        : 'border-white/10 bg-white/5 text-slate-400'
-                    }`}
-                  >
-                    <CreditCard className="w-4 h-4 text-indigo-400 mb-1" />
-                    <span>Card / NetBanking</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('COD')}
-                    className={`p-2.5 rounded-xl border text-left text-xs font-bold transition-all ${
-                      paymentMethod === 'COD'
-                        ? 'border-amber-400 bg-amber-500/10 text-white'
-                        : 'border-white/10 bg-white/5 text-slate-400'
-                    }`}
-                  >
-                    <Lock className="w-4 h-4 text-emerald-400 mb-1" />
-                    <span>Escrow Pay</span>
-                  </button>
+                <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-3 text-xs text-cyan-100">
+                  Payment is not captured until checkout verification. Sandbox mode uses a manual simulation button and never charges a card.
                 </div>
-              </div>
 
-              <div className="pt-2">
+                <div className="pt-2">
                 <button
                   type="submit"
                   disabled={submitting}
                   className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
-                  {submitting ? 'Securing Escrow Payment...' : `Confirm & Pay ₹${totalAmount.toLocaleString('en-IN')}`}
-                  <ArrowRight className="w-4 h-4" />
+                  {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating secure order…</> : `Continue to checkout · ₹${totalAmount.toLocaleString('en-IN')}`}
+                  {!submitting && <ArrowRight className="w-4 h-4" />}
                 </button>
               </div>
             </form>

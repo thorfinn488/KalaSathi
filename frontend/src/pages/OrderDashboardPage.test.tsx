@@ -7,6 +7,7 @@ import { OrderDashboardPage } from './OrderDashboardPage';
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  localStorage.removeItem('sih_auth_token');
 });
 
 describe('OrderDashboardPage', () => {
@@ -38,6 +39,7 @@ describe('OrderDashboardPage', () => {
         ],
       });
     vi.stubGlobal('fetch', fetchMock);
+    localStorage.setItem('sih_auth_token', 'admin-test-token');
 
     render(<OrderDashboardPage />);
 
@@ -47,8 +49,28 @@ describe('OrderDashboardPage', () => {
     expect(screen.getByText('3,150')).toBeInTheDocument();
     expect(screen.getByTestId('low-stock-count')).toHaveTextContent('1');
     expect(screen.getByText('Embroidered Dupatta')).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenNthCalledWith(1, '/demo-api/artisans/profit');
-    expect(fetchMock).toHaveBeenNthCalledWith(2, '/demo-api/products/low-stock');
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/demo-api/artisans/profit', { headers: { Authorization: 'Bearer admin-test-token' } });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, '/demo-api/products/low-stock', { headers: { Authorization: 'Bearer admin-test-token' } });
+  });
+
+  it('does not present missing material expenses as zero profit', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [{
+          artisan_id: 'artisan-1',
+          artisan: 'Sunita Devi',
+          revenue: 3600,
+          expenses: null,
+          net_profit: null,
+        }],
+      })
+      .mockResolvedValueOnce({ ok: true, json: async () => [] });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<OrderDashboardPage />);
+
+    expect(await screen.findAllByText('Not recorded')).toHaveLength(2);
   });
 
   it('shows an error state when the order API is unreachable', async () => {

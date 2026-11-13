@@ -19,7 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const navItems = [
     { id: 'marketplace', label: 'Explore Crafts', icon: Store, visible: true },
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
-    { id: 'order-dashboard', label: 'Order Analytics', icon: BarChart3, visible: Boolean(user) && showOrderDashboard },
+    { id: 'order-dashboard', label: 'Order Analytics', icon: BarChart3, visible: user?.role === 'ADMIN' && showOrderDashboard },
     { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
     { id: 'opportunities', label: t.opportunities, icon: ShoppingBag, visible: user?.role === 'BUYER' || user?.role === 'ADMIN' },
     { id: 'admin', label: 'Admin Panel', icon: ShieldCheck, visible: user?.role === 'ADMIN' },
@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                   {t.dashboard}
                 </button>
 
-                {showOrderDashboard && (
+                {showOrderDashboard && user.role === 'ADMIN' && (
                   <button
                     onClick={() => setCurrentTab('order-dashboard')}
                     className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${

@@ -6,7 +6,17 @@ import { X, CheckCircle2, ShieldCheck, Sparkles, Building2, Package, IndianRupee
 interface B2BQuoteModalProps {
   product: ProductDetail;
   onClose: () => void;
-  onSuccess: (quoteDetails: any) => void;
+  onSuccess: (quoteDetails: B2BQuoteResponse) => void;
+}
+
+interface B2BQuoteResponse {
+  opportunity_id: string;
+  quantity: number;
+  moq: number;
+  estimated_lead_days: number;
+  discount_percent: number;
+  unit_price: number;
+  estimated_total: number;
 }
 
 export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, onSuccess }) => {
@@ -18,9 +28,10 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
   const [customNotes, setCustomNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [serverQuote, setServerQuote] = useState<B2BQuoteResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const basePrice = product.price?.suggested_price || product.pricing?.suggested_price || 2500;
+  const basePrice = product.pricing?.suggested_price || product.price?.suggested_price || 2500;
   
   // Tiered discount calculation
   let discountPercent = 0;
@@ -33,7 +44,7 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
   const packagingExtra = packaging === 'Laser-Engraved Corporate Wooden Box' ? 120 : 0;
   const unitDiscountedPrice = Math.round(basePrice * (1 - discountPercent / 100)) + packagingExtra;
   const totalValue = unitDiscountedPrice * quantity;
-  const leadTime = Math.max(12, Math.round((product.lead_time_days || 14) * (1 + (quantity / 300))));
+  const leadTime = Math.max(product.lead_time_days || 14, Math.ceil(quantity / 4));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,23 +60,24 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
         buyer_name: buyerName,
         company_name: companyName || 'Enterprise Buyer',
         product_id: product.product_id || product.id,
-        requirement: `Wholesale Quotation Request: ${quantity} units of "${product.catalogue?.name}". ${customNotes ? `Notes: ${customNotes}` : ''} (Contact: ${contactInfo})`,
+        requirement: `Wholesale Quotation Request: ${quantity} units of "${product.catalogue?.name}". ${customNotes ? `Notes: ${customNotes}` : ''}`,
         quantity,
         packaging,
-        budget: `₹${totalValue.toLocaleString('en-IN')}`,
+        contact_info: contactInfo,
       };
 
-      await apiRequest('/opportunities', {
+      const quote = await apiRequest<B2BQuoteResponse>('/opportunities', {
         method: 'POST',
         body: JSON.stringify(payload),
       });
 
+      setServerQuote(quote);
       setSubmitted(true);
       setTimeout(() => {
-        onSuccess(payload);
+        onSuccess(quote);
       }, 1800);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit quotation request. Please try again.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to submit quotation request. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -89,7 +101,14 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
             </div>
             <h2 className="text-2xl font-black text-white">Quotation Request Submitted!</h2>
             <p className="text-xs text-slate-400 max-w-md mx-auto">
-              Our direct artisan linkage desk has transmitted your RFQ for <strong className="text-white">{quantity} units</strong> to the artisan cluster. An official spec sheet proposal is being prepared.
+              The artisan cluster received your request for <strong className="text-white">{serverQuote?.quantity ?? quantity} units</strong>.
+              {serverQuote && (
+                <span className="mt-3 block text-sm text-slate-200">
+                  Server estimate: ₹{serverQuote.estimated_total.toLocaleString('en-IN')} total
+                  (₹{serverQuote.unit_price.toLocaleString('en-IN')} per unit), about {serverQuote.estimated_lead_days} working days.
+                  The artisan's final confirmation is still pending.
+                </span>
+              )}
             </p>
           </div>
         ) : (
@@ -156,18 +175,18 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3 border-t border-white/10 text-xs">
                 <div>
                   <span className="text-slate-500 block">Total Quotation Value:</span>
-                  <span className="font-extrabold text-white text-sm">₹{totalValue.toLocaleString('en-IN')}</span>
+                  <span className="font-extrabold text-white text-sm">₹{(serverQuote?.estimated_total ?? totalValue).toLocaleString('en-IN')}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Crafting & Dispatch:</span>
                   <span className="font-bold text-cyan-300 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" /> ~{leadTime} working days
+                    <Clock className="w-3.5 h-3.5" /> ~{serverQuote?.estimated_lead_days ?? leadTime} working days
                   </span>
                 </div>
                 <div className="col-span-2 sm:col-span-1">
-                  <span className="text-slate-500 block">Artisan Advance:</span>
+                  <span className="text-slate-500 block">Minimum Order:</span>
                   <span className="font-bold text-emerald-300 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> 40% Escrow Advance
+                    <ShieldCheck className="w-3.5 h-3.5" /> {serverQuote?.moq ?? product.moq ?? 10} units
                   </span>
                 </div>
               </div>
@@ -248,7 +267,7 @@ export const B2BQuoteModal: React.FC<B2BQuoteModalProps> = ({ product, onClose, 
               <div className="flex items-center justify-between pt-2">
                 <span className="text-[11px] text-slate-400 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Direct craft origin guaranteed
+                  Catalog origin details shared with the artisan
                 </span>
 
                 <button

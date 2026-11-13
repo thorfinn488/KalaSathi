@@ -92,6 +92,32 @@ export const AdminPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <div className="bg-white rounded-3xl border border-indigo-100 p-6 shadow-md space-y-4">
+        <h2 className="text-lg font-extrabold text-indigo-950 flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-indigo-600" /> Wholesale Requests ({opportunities.length})
+        </h2>
+        {opportunities.length === 0 ? (
+          <p className="text-sm text-slate-500">No wholesale requests have been received yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {opportunities.map((request) => (
+              <article key={request.opportunity_id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-slate-900">{request.company_name || request.buyer_name}</h3>
+                    <p className="text-xs text-slate-500">{request.buyer_name} · {request.buyer_contact || 'No contact supplied'}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-indigo-100 px-2 py-1 text-[10px] font-bold text-indigo-800">
+                    {request.quantity ?? '—'} units · {request.status}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed text-slate-600">{request.requirement}</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
