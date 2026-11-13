@@ -4,15 +4,15 @@
   "version": "1.0.0",
   "description": "KalaSaathi - Fullstack AI Business Manager for Marginalized Artisans",
   "scripts": {
-    "setup": "npm install --prefix server && npm install --prefix frontend",
-    "dev": "concurrently --kill-others --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run dev --prefix server\" \"npm run dev --prefix frontend\"",
-    "dev:server": "npm run dev --prefix server",
+    "setup": "npm install --prefix frontend",
+    "dev": "concurrently --kill-others --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"mvn -f server/pom.xml spring-boot:run\" \"npm run dev --prefix frontend\"",
+    "dev:server": "mvn -f server/pom.xml spring-boot:run",
     "dev:frontend": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix server && npm run build --prefix frontend",
-    "build:server": "npm run build --prefix server",
+    "build": "mvn -f server/pom.xml package -DskipTests && npm run build --prefix frontend",
+    "build:server": "mvn -f server/pom.xml package -DskipTests",
     "build:frontend": "npm run build --prefix frontend",
-    "start": "npm start --prefix server",
-    "test": "npm run test:ui --prefix frontend"
+    "start": "java -jar server/target/kalasathi-server-1.0.0-SNAPSHOT.jar",
+    "test": "mvn -f server/pom.xml test && npm run test:ui --prefix frontend"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
