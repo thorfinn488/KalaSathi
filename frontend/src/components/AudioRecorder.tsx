@@ -120,8 +120,12 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({ onAudioReady, onTr
   };
 
   const simulateRecording = () => {
-    transcriptRef.current = '';
-    setLiveTranscript('');
+    const hindiSample = 'यह हस्तनिर्मित मधुबनी पेंटिंग है। इसे प्राकृतिक रंगों और बांस की टहनी से हाथ से बनाया गया है। इसमें राधा-कृष्ण की लीला को दर्शाया गया है।';
+    const englishSample = 'This is a handmade Madhubani painting on handmade paper. Created using 100% natural organic vegetable dyes and fine bamboo twig nibs.';
+    const sampleText = language === 'hi' ? hindiSample : englishSample;
+
+    transcriptRef.current = sampleText;
+    setLiveTranscript(sampleText);
     setIsRecording(true);
     setRecordingTime(0);
     timerRef.current = setInterval(() => {
