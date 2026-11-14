@@ -273,7 +273,7 @@ public class OrderService {
             throw new ApiException("INVALID_ORDER_STATE",
                     "Order cannot be confirmed in the current state.", HttpStatus.CONFLICT);
         }
-        return publicOrder(order);
+        return toCheckoutOrder(order, "sandbox", null);
     }
 
     @Transactional

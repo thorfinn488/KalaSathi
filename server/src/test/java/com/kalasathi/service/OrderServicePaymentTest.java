@@ -147,6 +147,29 @@ class OrderServicePaymentTest {
         assertEquals(OrderEntity.PaymentStatus.PENDING, order.getPaymentStatus());
     }
 
+    @Test
+    void sandboxConfirmMarksPendingOrderAsPaid() {
+        OrderService service = service("sandbox", "", "", "");
+        OrderEntity order = order("order_sandbox_1", null);
+        when(orderRepository.findById("order_sandbox_1")).thenReturn(Optional.of(order));
+
+        var response = service.confirmSandbox("order_sandbox_1");
+
+        assertEquals("PAID", response.payment_status());
+        assertEquals("sandbox", response.payment_mode());
+        assertEquals(OrderEntity.PaymentStatus.PAID, order.getPaymentStatus());
+        verify(cacheInvalidationService).ordersChanged();
+    }
+
+    @Test
+    void sandboxConfirmRejectsWhenSandboxModeDisabled() {
+        OrderService service = service("razorpay", KEY_ID, KEY_SECRET, WEBHOOK_SECRET);
+        OrderEntity order = order("order_sandbox_2", null);
+
+        ApiException exception = assertThrows(ApiException.class, () -> service.confirmSandbox("order_sandbox_2"));
+        assertEquals("SANDBOX_DISABLED", exception.getCode());
+    }
+
     private OrderService service(String mode, String keyId, String keySecret, String webhookSecret) {
         return new OrderService(
                 orderRepository, productRepository, userRepository, objectMapper, httpClient,

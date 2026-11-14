@@ -112,17 +112,17 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-heritage-sand/60 pb-6">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold mb-3">
-            <Sparkles className="w-3.5 h-3.5" /> Ministry of Textiles &amp; GI Cluster Mapping
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-heritage-ivory border border-heritage-sand text-heritage-terracotta text-xs font-bold mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-heritage-gold" /> Ministry of Textiles &amp; GI Cluster Mapping
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white font-serif">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-heritage-navy font-serif">
             Living Heritage &amp; Craft Clusters
           </h1>
-          <p className="text-sm text-stone-300 max-w-2xl mt-2 leading-relaxed">
+          <p className="text-sm text-stone-600 max-w-2xl mt-2 leading-relaxed">
             Trace the roots of India's ancestral crafts directly to the clusters where master artisans produce GI-certified handmade treasures.
           </p>
         </div>
@@ -135,26 +135,26 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by craft, state, or GI..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 focus:bg-stone-900 transition-all"
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-white border border-heritage-sand text-xs text-heritage-navy placeholder-stone-400 focus:outline-none focus:border-heritage-gold transition-all shadow-sm"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Interactive Stylized Geographical Map Canvas (Col 7) */}
-        <div className="lg:col-span-7 bg-stone-950/70 border border-white/10 rounded-3xl p-6 relative overflow-hidden backdrop-blur-sm">
+        <div className="lg:col-span-7 bg-white border border-heritage-sand rounded-3xl p-6 relative overflow-hidden shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-amber-400" /> Interactive Cluster Pinpoint
+            <span className="text-xs uppercase tracking-wider text-heritage-terracotta font-bold flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-heritage-terracotta" /> Interactive Cluster Pinpoint
             </span>
             <span className="text-[11px] text-stone-400">Click a node to view provenance</span>
           </div>
 
           {/* SVG Map of India Stylized Representation */}
-          <div className="relative w-full aspect-[4/3] bg-stone-900/40 rounded-2xl border border-white/5 flex items-center justify-center p-4">
+          <div className="relative w-full aspect-[4/3] bg-heritage-ivory rounded-2xl border border-heritage-sand/60 flex items-center justify-center p-4">
             <svg 
               viewBox="0 0 100 100" 
-              className="w-full h-full max-h-[460px] drop-shadow-2xl select-none"
+              className="w-full h-full max-h-[460px] drop-shadow select-none"
             >
               {/* Generalized decorative subcontinent outline */}
               <path
@@ -168,9 +168,9 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                    Q 34 85 30 70 
                    Q 22 55 25 42 
                    Q 22 30 32 20 Z"
-                fill="rgba(30, 41, 59, 0.4)"
-                stroke="rgba(245, 158, 11, 0.25)"
-                strokeWidth="0.8"
+                fill="rgba(27, 35, 82, 0.08)"
+                stroke="#B8893A"
+                strokeWidth="1"
                 strokeDasharray="2 1"
               />
 
@@ -192,7 +192,7 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                         cx={cluster.coordinates.x}
                         cy={cluster.coordinates.y}
                         r="6"
-                        className="animate-ping opacity-40 fill-amber-400"
+                        className="animate-ping opacity-30 fill-heritage-terracotta"
                       />
                     )}
                     
@@ -202,8 +202,8 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                       r={isSelected ? 4 : 2.8}
                       className={`transition-all duration-300 ${
                         isSelected 
-                          ? 'fill-amber-400 stroke-stone-950 stroke-[1.5]' 
-                          : 'fill-stone-300 group-hover:fill-amber-300'
+                          ? 'fill-heritage-terracotta stroke-white stroke-[1.5]' 
+                          : 'fill-heritage-navy group-hover:fill-heritage-gold'
                       }`}
                     />
 
@@ -213,8 +213,8 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                       y={cluster.coordinates.y + 1.5}
                       fontSize="3.2"
                       fontWeight={isSelected ? 'bold' : 'normal'}
-                      fill={isSelected ? '#fef08a' : '#cbd5e1'}
-                      className="pointer-events-none drop-shadow"
+                      fill={isSelected ? '#6E2233' : '#1B2352'}
+                      className="pointer-events-none drop-shadow-sm font-sans"
                     >
                       {cluster.name.split(' ')[0]}
                     </text>
@@ -224,12 +224,12 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
             </svg>
 
             {/* Quick Map Legend */}
-            <div className="absolute bottom-3 left-3 bg-stone-950/90 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-stone-400 flex items-center gap-3">
+            <div className="absolute bottom-3 left-3 bg-white/95 border border-heritage-sand rounded-xl px-3 py-1.5 text-[10px] text-stone-600 flex items-center gap-3 shadow-sm">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400" /> Active Selected Cluster
+                <span className="w-2 h-2 rounded-full bg-heritage-terracotta" /> Active Selected Cluster
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-stone-400" /> GI Heritage Region
+                <span className="w-2 h-2 rounded-full bg-heritage-navy" /> GI Heritage Region
               </span>
             </div>
           </div>
@@ -242,11 +242,11 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                 onClick={() => setSelectedCluster(cluster)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                   selectedCluster.id === cluster.id
-                    ? 'bg-amber-500 text-stone-950 shadow-md'
-                    : 'bg-white/5 text-stone-300 hover:bg-white/10 hover:text-white'
+                    ? 'bg-heritage-navy text-white shadow-sm'
+                    : 'bg-heritage-ivory text-heritage-navy border border-heritage-sand hover:bg-stone-100'
                 }`}
               >
-                <MapPin className="w-3 h-3" />
+                <MapPin className="w-3 h-3 text-heritage-terracotta" />
                 {cluster.name}
               </button>
             ))}
@@ -254,45 +254,45 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
         </div>
 
         {/* Selected Cluster Deep-Dive & Provenance Card (Col 5) */}
-        <div className="lg:col-span-5 bg-gradient-to-b from-stone-900 to-stone-950 border-2 border-amber-500/30 rounded-3xl p-6 sm:p-7 space-y-6 shadow-2xl relative">
+        <div className="lg:col-span-5 bg-white border border-heritage-sand rounded-3xl p-6 sm:p-7 space-y-6 shadow-md relative">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider block">
+              <span className="text-[10px] text-heritage-terracotta font-bold uppercase tracking-wider block">
                 {selectedCluster.giTag} · {selectedCluster.state}
               </span>
-              <h2 className="text-2xl font-black text-amber-100 font-serif mt-1">
+              <h2 className="text-2xl font-black text-heritage-navy font-serif mt-1">
                 {selectedCluster.name}
               </h2>
             </div>
-            <div className="p-2 bg-amber-500/10 rounded-2xl border border-amber-500/30 text-amber-300">
+            <div className="p-2 bg-heritage-ivory rounded-2xl border border-heritage-sand text-heritage-gold">
               <Award className="w-6 h-6" />
             </div>
           </div>
 
-          <p className="text-xs text-stone-300 leading-relaxed">
+          <p className="text-xs text-stone-600 leading-relaxed">
             {selectedCluster.description}
           </p>
 
           {/* Cluster Metrics */}
-          <div className="grid grid-cols-2 gap-3 bg-stone-950/80 p-4 rounded-2xl border border-white/5 text-xs">
+          <div className="grid grid-cols-2 gap-3 bg-heritage-ivory p-4 rounded-2xl border border-heritage-sand/70 text-xs">
             <div>
-              <span className="text-[10px] text-stone-400 uppercase tracking-wider block">Artisan Guild</span>
-              <strong className="text-white text-sm flex items-center gap-1.5 mt-0.5">
-                <Users className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Artisan Guild</span>
+              <strong className="text-heritage-navy text-sm flex items-center gap-1.5 mt-0.5">
+                <Users className="w-3.5 h-3.5 text-heritage-gold" />
                 {selectedCluster.artisanCount.toLocaleString()} Masters
               </strong>
             </div>
 
             <div>
-              <span className="text-[10px] text-stone-400 uppercase tracking-wider block">Craft Category</span>
-              <strong className="text-amber-300 text-sm block mt-0.5 truncate">
+              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Craft Category</span>
+              <strong className="text-heritage-terracotta text-sm block mt-0.5 truncate">
                 {selectedCluster.craftType}
               </strong>
             </div>
 
-            <div className="col-span-2 border-t border-white/5 pt-2">
-              <span className="text-[10px] text-stone-400 uppercase tracking-wider block">Ancestral Raw Materials</span>
-              <span className="text-stone-300 text-xs block mt-0.5">
+            <div className="col-span-2 border-t border-heritage-sand/60 pt-2">
+              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Ancestral Raw Materials</span>
+              <span className="text-stone-700 text-xs block mt-0.5">
                 {selectedCluster.materials}
               </span>
             </div>
@@ -300,13 +300,13 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
 
           {/* Hallmark Highlights */}
           <div className="space-y-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400/90 font-bold block">
+            <span className="text-[10px] uppercase tracking-widest text-heritage-gold font-bold block">
               Authenticity Hallmarks
             </span>
             <div className="space-y-1.5">
               {selectedCluster.highlights.map((highlight, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-stone-300">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div key={idx} className="flex items-center gap-2 text-xs text-stone-700">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
                   <span>{highlight}</span>
                 </div>
               ))}
@@ -314,12 +314,12 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
           </div>
 
           {/* Action Footer */}
-          <div className="border-t border-white/10 pt-4 flex flex-col sm:flex-row gap-3">
+          <div className="border-t border-heritage-sand/60 pt-4 flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => {
                 if (onExploreMarketplace) onExploreMarketplace();
               }}
-              className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-stone-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-all"
+              className="btn btn-primary flex-1 py-2.5 px-4 text-xs flex items-center justify-center gap-2 shadow-md"
             >
               <span>Explore Cluster Crafts</span>
               <ArrowRight className="w-4 h-4" />
