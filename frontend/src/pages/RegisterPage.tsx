@@ -38,24 +38,25 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
   };
 
   return (
-    <div className="auth-shell">
-      <div className="auth-panel max-w-md w-full p-8 space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-heritage-ivory font-sans relative">
+      <div className="absolute inset-0 bg-hero-woven-bg opacity-20 pointer-events-none" />
+      <div className="relative z-10 max-w-md w-full p-8 rounded-3xl border border-heritage-sand bg-white shadow-2xl space-y-6 text-heritage-navy">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="brand-mark inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white font-black text-3xl shadow-md mb-2">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-heritage-navy text-heritage-gold font-serif font-black text-3xl shadow-lg border border-heritage-sand/40 mb-1">
             क
           </div>
-          <h1 className="text-2xl font-extrabold text-amber-950">{t.register}</h1>
-          <p className="text-sm text-slate-500">{t.tagline}</p>
+          <h1 className="text-2xl font-black font-serif text-heritage-navy">{t.register}</h1>
+          <p className="text-sm text-stone-500">{t.tagline}</p>
         </div>
 
         {/* Role Selector Tabs */}
-        <div className="grid grid-cols-2 gap-2 p-1 bg-amber-50 rounded-xl border border-amber-200/80">
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-heritage-ivory rounded-2xl border border-heritage-sand">
           <button
             type="button"
             onClick={() => setRole('ARTISAN')}
-            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
-              role === 'ARTISAN' ? 'bg-amber-600 text-white shadow-md' : 'text-amber-900 hover:bg-amber-100'
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+              role === 'ARTISAN' ? 'bg-heritage-navy text-white shadow-sm' : 'text-stone-600 hover:text-heritage-navy'
             }`}
           >
             {t.artisan}
@@ -63,8 +64,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
           <button
             type="button"
             onClick={() => setRole('BUYER')}
-            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
-              role === 'BUYER' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-700 hover:bg-amber-100'
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+              role === 'BUYER' ? 'bg-heritage-navy text-white shadow-sm' : 'text-stone-600 hover:text-heritage-navy'
             }`}
           >
             {t.buyer}
@@ -72,61 +73,61 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
         </div>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            <p className="text-xs font-semibold text-red-700">{error}</p>
+          <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <p className="text-xs font-semibold text-rose-800">{error}</p>
           </div>
         )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
               {t.name}
             </label>
             <div className="relative">
-              <User className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+              <User className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Meena Devi"
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
               {t.phone}
             </label>
             <div className="relative">
-              <Phone className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+              <Phone className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
               <input
                 type="text"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Enter your phone number"
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
               {t.password}
             </label>
             <div className="relative">
-              <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+              <Lock className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
               />
             </div>
           </div>
@@ -135,32 +136,32 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
           {role === 'ARTISAN' && (
             <>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
                   Region / State (क्षेत्र)
                 </label>
                 <div className="relative">
-                  <MapPin className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+                  <MapPin className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
                     placeholder="e.g. Patiala, Punjab"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
                   Craft Specialty (कला का प्रकार)
                 </label>
                 <div className="relative">
-                  <Palette className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+                  <Palette className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     value={craftSpecialty}
                     onChange={(e) => setCraftSpecialty(e.target.value)}
                     placeholder="e.g. Phulkari / Madhubani / Woodcraft"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
                   />
                 </div>
               </div>
@@ -171,22 +172,22 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
           {role === 'BUYER' && (
             <>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
                   Company / Retail Store Name
                 </label>
                 <div className="relative">
-                  <Building className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
+                  <Building className="w-5 h-5 text-stone-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder="e.g. Heritage Crafts Retail Ltd."
-                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">
                   Sourcing Requirements
                 </label>
                 <textarea
@@ -194,7 +195,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
                   value={requirements}
                   onChange={(e) => setRequirements(e.target.value)}
                   placeholder="e.g. Looking for authentic hand-embroidered textiles..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-medium text-sm text-slate-900"
+                  className="w-full px-4 py-2.5 rounded-xl border border-heritage-sand bg-heritage-ivory text-heritage-navy font-medium text-sm focus:border-heritage-gold focus:bg-white outline-none transition-all"
                 />
               </div>
             </>
@@ -203,7 +204,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3.5 px-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-base active:scale-95 disabled:opacity-50"
+            className="btn btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
           >
             <UserPlus className="w-5 h-5" />
             {submitting ? 'Creating Account...' : t.register}
@@ -211,12 +212,12 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
         </form>
 
         {/* Footer Link */}
-        <div className="text-center pt-2 border-t border-slate-100">
-          <p className="text-xs text-slate-500">
+        <div className="text-center pt-2 border-t border-heritage-sand/60">
+          <p className="text-xs text-stone-500">
             Already registered?{' '}
             <button
               onClick={onNavigateLogin}
-              className="text-amber-700 font-bold hover:underline inline-flex items-center gap-1"
+              className="text-heritage-terracotta font-bold hover:underline inline-flex items-center gap-1"
             >
               {t.login}
             </button>

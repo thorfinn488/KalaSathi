@@ -43,3 +43,7 @@ tmp/
 *.tmp
 .agents/
 
+# User reference design attachments
+/images/
+/index.html
+
