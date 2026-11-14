@@ -16,6 +16,12 @@ Check the containers with `docker compose ps`. The API listens on port 8080; ver
 
 For frontend development, set `VITE_API_URL` to the local API URL ending in `/api`, then run `npm ci --prefix frontend` and `npm run dev --prefix frontend`. The Vite development server uses port 5173 by default.
 
+### Development Scripts & E2E Verification
+Helper automation scripts reside in `scripts/dev/`:
+- `scripts/dev/start-env.ps1`: Starts isolated PostgreSQL 17 and Redis 7 containers with ephemeral session credentials.
+- `scripts/dev/stop-env.ps1`: Gracefully terminates services and cleans up temporary test images and logs.
+- `scripts/dev/run-e2e-verification.ps1`: Executes the Phase E 8-step integration verification suite (auth, product lifecycle, public catalog, storage resilience, sandbox order, payment confirmation, tracking, cleanup).
+
 ## Render API, PostgreSQL, and Redis
 
 1. Create a PostgreSQL 17 service and a Redis 7 Key Value service on Render. Keep their internal endpoints private.

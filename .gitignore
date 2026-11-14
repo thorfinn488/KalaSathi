@@ -34,3 +34,12 @@ frontend/.vercel/
 *.log
 .DS_Store
 Thumbs.db
+
+# Verification, audit spreadsheets, and test artifacts
+*.xlsx
+.github/modernize/
+scripts/dev/*.log
+tmp/
+*.tmp
+.agents/
+
