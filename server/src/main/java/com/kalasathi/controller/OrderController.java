@@ -65,7 +65,9 @@ public class OrderController {
     }
 
     @PostMapping("/{id}/payment/sandbox-confirm")
-    public ApiResponse<OrderResponse> confirmSandbox(@PathVariable String id) {
+    public ApiResponse<OrderResponse> confirmSandbox(
+            @PathVariable String id,
+            @RequestBody(required = false) Object requestBody) {
         return ApiResponse.success(orderService.confirmSandbox(id));
     }
 
