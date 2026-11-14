@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { OpportunityListItem } from '../types';
 import { apiRequest } from '../api/client';
-import { Building2, MapPin, ShieldCheck, Sparkles } from 'lucide-react';
+import { Building2, MapPin, ShieldCheck, Sparkles, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { CounterOfferModal, CounterOfferSubmission } from '../components/CounterOfferModal';
 
 export const OpportunitiesPage: React.FC = () => {
   const { t } = useLanguage();
   const [opportunities, setOpportunities] = useState<OpportunityListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOpp, setSelectedOpp] = useState<OpportunityListItem | null>(null);
+  const [submittedOffers, setSubmittedOffers] = useState<Record<string, CounterOfferSubmission>>({});
 
   useEffect(() => {
     async function loadOpps() {
@@ -61,9 +64,18 @@ export const OpportunitiesPage: React.FC = () => {
                 <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-indigo-500" /> Verified Procurement
                 </span>
-                <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1">
-                  <ShieldCheck className="w-4 h-4" /> Send Quotation
-                </button>
+                {submittedOffers[opp.opportunity_id] ? (
+                  <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-xl flex items-center gap-1 border border-emerald-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Proposal Sent (₹{submittedOffers[opp.opportunity_id].proposed_unit_price})
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => setSelectedOpp(opp)}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1"
+                  >
+                    <ShieldCheck className="w-4 h-4" /> Propose Terms / Quote
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -74,6 +86,17 @@ export const OpportunitiesPage: React.FC = () => {
           <h3 className="text-base font-bold text-slate-700">No Open Buyer Opportunities</h3>
           <p className="text-xs text-slate-500">Check back soon for new retail buyer demands.</p>
         </div>
+      )}
+
+      {selectedOpp && (
+        <CounterOfferModal
+          opportunity={selectedOpp}
+          onClose={() => setSelectedOpp(null)}
+          onSuccess={(submission) => {
+            setSubmittedOffers(prev => ({ ...prev, [submission.opportunity_id]: submission }));
+            setSelectedOpp(null);
+          }}
+        />
       )}
     </div>
   );
