@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store, Truck, MapPin } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store, Truck, MapPin, Bell } from 'lucide-react';
 import { OrderTrackModal } from './OrderTrackModal';
+import { NotificationModal } from './NotificationModal';
 
 interface NavbarProps {
   currentTab: string;
@@ -14,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const { language, setLanguage, t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTrackModal, setShowTrackModal] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
   const navItems = [
@@ -149,6 +151,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
               <span className="hidden sm:inline">Track Order</span>
             </button>
 
+            {/* Notification Bell */}
+            <button
+              onClick={() => setShowNotifications(true)}
+              className="relative inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10"
+              title="Cluster Alerts & Notifications"
+            >
+              <Bell className="w-4 h-4 text-amber-300" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-slate-950 animate-pulse" />
+            </button>
+
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
@@ -229,6 +241,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
       )}
 
       {showTrackModal && <OrderTrackModal onClose={() => setShowTrackModal(false)} />}
+      {showNotifications && (
+        <NotificationModal
+          onClose={() => setShowNotifications(false)}
+          onNavigateTab={setCurrentTab}
+        />
+      )}
     </header>
   );
 };
