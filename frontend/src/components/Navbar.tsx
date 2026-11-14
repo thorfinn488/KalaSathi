@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store, Truck } from 'lucide-react';
+import { Sparkles, LogOut, Languages, PlusCircle, LayoutDashboard, ShoppingBag, ShieldCheck, Menu, X, BarChart3, Store, Truck, MapPin } from 'lucide-react';
 import { OrderTrackModal } from './OrderTrackModal';
 
 interface NavbarProps {
@@ -18,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
 
   const navItems = [
     { id: 'marketplace', label: 'Explore Crafts', icon: Store, visible: true },
+    { id: 'heritage-map', label: 'Cluster Map', icon: MapPin, visible: true },
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
     { id: 'order-dashboard', label: 'Order Analytics', icon: BarChart3, visible: user?.role === 'ADMIN' && showOrderDashboard },
     { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
@@ -62,6 +63,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
             >
               <Store className="w-3.5 h-3.5 text-amber-400" />
               Explore Crafts
+            </button>
+
+            <button
+              onClick={() => setCurrentTab('heritage-map')}
+              className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 ${
+                currentTab === 'heritage-map' ? 'bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-sm' : 'text-white/60 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5 text-amber-400" />
+              Heritage Clusters
             </button>
 
             {user && (

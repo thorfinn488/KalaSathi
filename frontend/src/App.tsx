@@ -12,6 +12,7 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { OpportunitiesPage } from './pages/OpportunitiesPage';
 import { AdminPage } from './pages/AdminPage';
 import { PublicMarketplacePage } from './pages/PublicMarketplacePage';
+import { HeritageMapPage } from './pages/HeritageMapPage';
 
 const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
 
@@ -63,6 +64,12 @@ function MainApp() {
               setCurrentTab('product-detail');
             }}
             onEnterStudio={() => setCurrentTab('login')}
+          />
+        )}
+
+        {currentTab === 'heritage-map' && (
+          <HeritageMapPage
+            onExploreMarketplace={() => setCurrentTab('marketplace')}
           />
         )}
 
