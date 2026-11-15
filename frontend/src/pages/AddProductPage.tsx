@@ -261,8 +261,7 @@ export const AddProductPage: React.FC<AddProductPageProps> = ({ onComplete, onCa
                 <div className="flex items-center text-2xl font-black font-serif text-heritage-navy">
                   <IndianRupee className="w-6 h-6 text-heritage-gold" />
                   <span>
-                    {completedProduct.price?.suggested_price.toLocaleString('en-IN') ||
-                     completedProduct.pricing?.suggested_price.toLocaleString('en-IN')}
+                    {(completedProduct.price?.suggested_price ?? completedProduct.pricing?.suggested_price)?.toLocaleString('en-IN') ?? 'Price pending'}
                   </span>
                 </div>
               </div>
