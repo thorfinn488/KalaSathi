@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Bell, Check, Clock, Package, Sparkles, X, ExternalLink, IndianRupee, ShieldCheck } from 'lucide-react';
 
 export interface AppNotification {
@@ -66,8 +67,19 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ onClose, o
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-end p-4 pt-16 sm:p-6 sm:pt-20 bg-[#1F1A2E]/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md rounded-3xl border border-[#E1D6BE] bg-[#FAF5EA] text-[#1F1A2E] shadow-2xl p-5 space-y-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-start justify-end p-4 pt-16 sm:p-6 sm:pt-20 bg-[#1F1A2E]/60 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ opacity: 0, x: 20, scale: 0.96 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={{ opacity: 0, x: 20, scale: 0.96 }}
+        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+        className="relative w-full max-w-md rounded-3xl border border-[#E1D6BE] bg-[#FAF5EA] text-[#1F1A2E] shadow-2xl p-5 space-y-4"
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#E1D6BE] pb-3">
@@ -154,7 +166,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ onClose, o
         <div className="text-center text-[10px] text-[#5E576B] border-t border-[#E1D6BE] pt-2">
           SMS &amp; WhatsApp notifications active for verified artisan cluster contacts
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

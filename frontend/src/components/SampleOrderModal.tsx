@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { ProductDetail } from '../types';
 import { apiRequest } from '../api/client';
 import { X, CheckCircle2, ShieldCheck, IndianRupee, Truck, ArrowRight, Loader2, Award } from 'lucide-react';
@@ -180,8 +181,19 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F1A2E]/70 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg rounded-3xl border border-[#E1D6BE] bg-[#FAF5EA] shadow-2xl p-6 sm:p-8 space-y-6 max-h-[92vh] overflow-y-auto text-[#1F1A2E]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F1A2E]/70 backdrop-blur-md"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+        className="relative w-full max-w-lg rounded-3xl border border-[#E1D6BE] bg-[#FAF5EA] shadow-2xl p-6 sm:p-8 space-y-6 max-h-[92vh] overflow-y-auto text-[#1F1A2E]"
+      >
         <button
           onClick={onClose}
           className="absolute right-5 top-5 p-2 rounded-full text-[#5E576B] hover:bg-[#FFFFFF] hover:text-[#1F1A2E] transition-all border border-transparent hover:border-[#E1D6BE]"
@@ -410,7 +422,7 @@ export const SampleOrderModal: React.FC<SampleOrderModalProps> = ({ product, onC
             </form>
           </>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

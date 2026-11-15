@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ProductDetail } from '../types';
 import { apiRequest, resolveAssetUrl } from '../api/client';
 import { B2BQuoteModal } from '../components/B2BQuoteModal';
 import { SampleOrderModal } from '../components/SampleOrderModal';
 import { ProvenanceCertificateModal } from '../components/ProvenanceCertificateModal';
+import { SpotlightCard } from '../components/ui/SpotlightCard';
+import { ShimmerBadge } from '../components/ui/ShimmerBadge';
+import { AnimatedCounter } from '../components/ui/AnimatedCounter';
 import {
   Sparkles,
   MapPin,
@@ -387,21 +391,31 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
             </p>
           </div>
 
-          {/* Filter Tabs */}
+          {/* Filter Tabs with Aceternity-style sliding layoutId pill */}
           <div className="flex flex-wrap items-center gap-2 pt-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-full font-bold text-xs transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-[#22306B] text-white shadow-sm'
-                    : 'bg-[#FFFFFF] border border-[#E1D6BE] text-[#4A4458] hover:border-[#B5532F] hover:text-[#1F1A2E]'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const isSelected = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`relative px-4 py-2 rounded-full font-bold text-xs transition-colors flex items-center justify-center ${
+                    isSelected
+                      ? 'text-white'
+                      : 'bg-[#FFFFFF] border border-[#E1D6BE] text-[#4A4458] hover:border-[#B5532F] hover:text-[#1F1A2E]'
+                  }`}
+                >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="active-category-pill"
+                      className="absolute inset-0 rounded-full bg-[#1B2352] shadow-sm -z-10"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{cat.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Search Box */}
@@ -424,9 +438,10 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
               const isFeature = index === 0;
 
               return (
-                <article
+                <SpotlightCard
                   key={prod.product_id}
-                  className={`heritage-card overflow-hidden flex flex-col ${
+                  enableTilt={true}
+                  className={`overflow-hidden flex flex-col ${
                     isFeature ? 'md:col-span-2 lg:col-span-2' : ''
                   }`}
                 >
@@ -436,13 +451,15 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                       src={imageSrc}
                       alt={prod.catalogue?.name || 'Handcrafted Indian Heritage Craft'}
                       loading="lazy"
-                      className={`w-full object-cover transition-transform duration-500 hover:scale-105 ${
+                      className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${
                         isFeature ? 'aspect-[16/9]' : 'aspect-[4/3]'
                       }`}
                     />
-                    <span className="gi-badge absolute top-3 left-3">
-                      <Award className="w-3.5 h-3.5 text-[#B8893A]" /> GI Tagged
-                    </span>
+                    <div className="absolute top-3 left-3 z-20">
+                      <ShimmerBadge variant="gold">
+                        100% GI Tagged
+                      </ShimmerBadge>
+                    </div>
                   </div>
 
                   {/* Body */}
@@ -456,7 +473,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                           <MapPin className="w-3 h-3 text-[#B8893A]" /> {prod.region || 'India'}
                         </span>
                       </div>
-                      <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1F1A2E] mt-1">
+                      <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1F1A2E] mt-1 group-hover:text-[#B5532F] transition-colors">
                         {prod.catalogue?.name || 'Handcrafted Artefact'}
                       </h3>
                       <p className="text-xs sm:text-sm text-[#5E576B] mt-1 line-clamp-2">
@@ -470,26 +487,26 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                       <div>
                         <span className="text-[11px] text-[#5E576B] block">Fair-Trade Price</span>
                         <span className="font-serif font-bold text-xl sm:text-2xl text-[#1F1A2E]">
-                          ₹{price.toLocaleString('en-IN')}
+                          <AnimatedCounter value={price} prefix="₹" />
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setProvenanceProduct(prod)}
-                          className="px-3.5 py-1.5 rounded-full border border-[#1F1A2E] text-xs font-bold text-[#1F1A2E] hover:bg-[#FAF5EA] transition-all"
+                          className="px-3.5 py-1.5 rounded-full border border-[#1F1A2E] text-xs font-bold text-[#1F1A2E] hover:bg-[#FAF5EA] transition-all active:scale-95"
                         >
                           View Provenance
                         </button>
                         <button
                           onClick={() => setSampleProduct(prod)}
-                          className="btn btn-primary text-xs py-1.5 px-4 min-h-[36px]"
+                          className="btn btn-primary text-xs py-1.5 px-4 min-h-[36px] active:scale-95"
                         >
                           Buy Sample
                         </button>
                         <button
                           onClick={() => setQuoteProduct(prod)}
-                          className="px-3 py-1.5 rounded-full bg-[#FAF5EA] border border-[#B8893A] text-xs font-bold text-[#6E2233] hover:bg-[#E4C27A]/20 transition-all"
+                          className="px-3 py-1.5 rounded-full bg-[#FAF5EA] border border-[#B8893A] text-xs font-bold text-[#6E2233] hover:bg-[#E4C27A]/20 transition-all active:scale-95"
                           title="Request Custom B2B Quotation"
                         >
                           B2B Quote
@@ -497,7 +514,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                       </div>
                     </div>
                   </div>
-                </article>
+                </SpotlightCard>
               );
             })}
           </div>
@@ -547,19 +564,23 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
 
               {/* 4 Metric Cards */}
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA]">
-                  <strong className="block font-serif text-2xl text-[#6E2233]">24</strong>
+                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA] transition-transform hover:translate-x-1">
+                  <strong className="block font-serif text-2xl text-[#6E2233]">
+                    <AnimatedCounter value={24} />
+                  </strong>
                   <span className="text-xs text-[#5E576B]">Rural Clusters</span>
                 </div>
-                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA]">
+                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA] transition-transform hover:translate-x-1">
                   <strong className="block font-serif text-2xl text-[#6E2233]">Direct</strong>
                   <span className="text-xs text-[#5E576B]">Artisan Linkage</span>
                 </div>
-                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA]">
-                  <strong className="block font-serif text-2xl text-[#6E2233]">0%</strong>
+                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA] transition-transform hover:translate-x-1">
+                  <strong className="block font-serif text-2xl text-[#6E2233]">
+                    <AnimatedCounter value={0} suffix="%" />
+                  </strong>
                   <span className="text-xs text-[#5E576B]">Intermediary Fee</span>
                 </div>
-                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA]">
+                <div className="p-4 rounded-r-xl border-l-4 border-[#B8893A] bg-[#FAF5EA] transition-transform hover:translate-x-1">
                   <strong className="block font-serif text-2xl text-[#6E2233]">Verified</strong>
                   <span className="text-xs text-[#5E576B]">Verifiable Origin</span>
                 </div>
@@ -589,31 +610,31 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Step 1 */}
-            <div className="heritage-card p-6 sm:p-8 relative space-y-4">
+            <SpotlightCard className="p-6 sm:p-8 space-y-4">
               <div className="step-counter">1</div>
               <h3 className="font-serif font-bold text-xl text-[#1F1A2E]">Discover Certified Crafts</h3>
               <p className="text-sm text-[#4A4458] leading-relaxed">
                 Browse GI-tagged products with verified artisan and regional cluster origin.
               </p>
-            </div>
+            </SpotlightCard>
 
             {/* Step 2 */}
-            <div className="heritage-card p-6 sm:p-8 relative space-y-4 md:translate-y-4">
+            <SpotlightCard className="p-6 sm:p-8 space-y-4 md:translate-y-4">
               <div className="step-counter">2</div>
               <h3 className="font-serif font-bold text-xl text-[#1F1A2E]">Order Directly or Request B2B Specs</h3>
               <p className="text-sm text-[#4A4458] leading-relaxed">
                 Individuals can purchase sample pieces; businesses can request wholesale specifications, custom laser engraving, and export-ready quotations.
               </p>
-            </div>
+            </SpotlightCard>
 
             {/* Step 3 */}
-            <div className="heritage-card p-6 sm:p-8 relative space-y-4">
+            <SpotlightCard className="p-6 sm:p-8 space-y-4">
               <div className="step-counter">3</div>
               <h3 className="font-serif font-bold text-xl text-[#1F1A2E]">Track Impact and Delivery</h3>
               <p className="text-sm text-[#4A4458] leading-relaxed">
                 Buyers receive transparent order tracking, digital provenance certificates, and verifiable ESG impact paperwork for corporate compliance.
               </p>
-            </div>
+            </SpotlightCard>
           </div>
         </div>
       </section>
@@ -815,36 +836,42 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
       {/* ========================================================================= */}
       {/* MODALS */}
       {/* ========================================================================= */}
-      {sampleProduct && (
-        <SampleOrderModal
-          product={sampleProduct}
-          onClose={() => setSampleProduct(null)}
-          onSuccess={(orderId) => {
-            setSampleProduct(null);
-            setQuoteSuccessMsg(`Sample order ${orderId} placed successfully!`);
-            setTimeout(() => setQuoteSuccessMsg(null), 5000);
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {sampleProduct && (
+          <SampleOrderModal
+            product={sampleProduct}
+            onClose={() => setSampleProduct(null)}
+            onSuccess={(orderId) => {
+              setSampleProduct(null);
+              setQuoteSuccessMsg(`Sample order ${orderId} placed successfully!`);
+              setTimeout(() => setQuoteSuccessMsg(null), 5000);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
-      {quoteProduct && (
-        <B2BQuoteModal
-          product={quoteProduct}
-          onClose={() => setQuoteProduct(null)}
-          onSuccess={() => {
-            setQuoteProduct(null);
-            setQuoteSuccessMsg('B2B quotation request submitted to cluster master artisan!');
-            setTimeout(() => setQuoteSuccessMsg(null), 5000);
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {quoteProduct && (
+          <B2BQuoteModal
+            product={quoteProduct}
+            onClose={() => setQuoteProduct(null)}
+            onSuccess={() => {
+              setQuoteProduct(null);
+              setQuoteSuccessMsg('B2B quotation request submitted to cluster master artisan!');
+              setTimeout(() => setQuoteSuccessMsg(null), 5000);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
-      {provenanceProduct && (
-        <ProvenanceCertificateModal
-          product={provenanceProduct}
-          onClose={() => setProvenanceProduct(null)}
-        />
-      )}
+      <AnimatePresence>
+        {provenanceProduct && (
+          <ProvenanceCertificateModal
+            product={provenanceProduct}
+            onClose={() => setProvenanceProduct(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

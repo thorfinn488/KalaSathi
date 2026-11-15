@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -74,103 +75,30 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
             </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links with Aceternity-style sliding layoutId pill */}
           <nav className="hidden md:flex items-center gap-1 bg-[#FFFFFF] border border-[#E1D6BE] p-1.5 rounded-full shadow-xs">
-            <button
-              onClick={() => setCurrentTab('marketplace')}
-              className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                currentTab === 'marketplace'
-                  ? 'bg-[#22306B] text-white shadow-xs'
-                  : 'text-[#4A4458] hover:text-[#1F1A2E] hover:bg-[#FAF5EA]'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5 text-[#B8893A]" />
-              Explore Crafts
-            </button>
-
-            <button
-              onClick={() => setCurrentTab('heritage-map')}
-              className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                currentTab === 'heritage-map'
-                  ? 'bg-[#22306B] text-white shadow-xs'
-                  : 'text-[#4A4458] hover:text-[#1F1A2E] hover:bg-[#FAF5EA]'
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#B5532F]" />
-              Cluster Map
-            </button>
-
-            {user && (
-              <>
+            {navItems.map(({ id, label, icon: Icon }) => {
+              const isActive = currentTab === id;
+              return (
                 <button
-                  onClick={() => setCurrentTab('dashboard')}
-                  className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                    currentTab === 'dashboard'
-                      ? 'bg-[#22306B] text-white shadow-xs'
-                      : 'text-[#4A4458] hover:text-[#1F1A2E] hover:bg-[#FAF5EA]'
+                  key={id}
+                  onClick={() => setCurrentTab(id)}
+                  className={`relative px-4 py-1.5 rounded-full font-bold text-xs transition-colors flex items-center gap-1.5 ${
+                    isActive ? 'text-white' : 'text-[#4A4458] hover:text-[#1F1A2E]'
                   }`}
                 >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  {t.dashboard}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-nav-pill"
+                      className="absolute inset-0 rounded-full bg-[#1B2352] shadow-sm -z-10"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#E4C27A]' : 'text-[#B8893A]'}`} />
+                  <span>{label}</span>
                 </button>
-
-                {showOrderDashboard && user.role === 'ADMIN' && (
-                  <button
-                    onClick={() => setCurrentTab('order-dashboard')}
-                    className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                      currentTab === 'order-dashboard'
-                        ? 'bg-[#22306B] text-white shadow-xs'
-                        : 'text-[#4A4458] hover:text-[#1F1A2E] hover:bg-[#FAF5EA]'
-                    }`}
-                  >
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    Analytics
-                  </button>
-                )}
-
-                {(user.role === 'ARTISAN' || user.role === 'ADMIN') && (
-                  <button
-                    onClick={() => setCurrentTab('add-product')}
-                    className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                      currentTab === 'add-product'
-                        ? 'bg-[#B5532F] text-white shadow-xs'
-                        : 'text-[#B5532F] hover:bg-[#FAF5EA]'
-                    }`}
-                  >
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    {t.addProduct}
-                  </button>
-                )}
-
-                {(user.role === 'BUYER' || user.role === 'ADMIN') && (
-                  <button
-                    onClick={() => setCurrentTab('opportunities')}
-                    className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                      currentTab === 'opportunities'
-                        ? 'bg-[#22306B] text-white shadow-xs'
-                        : 'text-[#4A4458] hover:text-[#1F1A2E] hover:bg-[#FAF5EA]'
-                    }`}
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    {t.opportunities}
-                  </button>
-                )}
-
-                {user.role === 'ADMIN' && (
-                  <button
-                    onClick={() => setCurrentTab('admin')}
-                    className={`px-3.5 py-1.5 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 ${
-                      currentTab === 'admin'
-                        ? 'bg-[#6E2233] text-white shadow-xs'
-                        : 'text-[#6E2233] hover:bg-[#FAF5EA]'
-                    }`}
-                  >
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    Admin
-                  </button>
-                )}
-              </>
-            )}
+              );
+            })}
           </nav>
 
           {/* User Controls & Language Toggle */}
@@ -248,42 +176,56 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {menuOpen && (
-        <nav className="border-t border-[#E1D6BE] px-4 py-3 md:hidden space-y-1.5 bg-[#FFFFFF] shadow-lg animate-fade-in" aria-label="Mobile navigation">
-          {navItems.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => { setCurrentTab(id); setMenuOpen(false); }}
-              className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-xs font-bold transition ${
-                currentTab === id
-                  ? 'bg-[#22306B] text-white shadow-xs'
-                  : 'text-[#4A4458] hover:bg-[#FAF5EA] hover:text-[#1F1A2E]'
-              }`}
-            >
-              <Icon className="h-4 w-4 text-[#B8893A]" />{label}
-            </button>
-          ))}
-          {!user && (
-            <button
-              type="button"
-              onClick={() => { setCurrentTab('login'); setMenuOpen(false); }}
-              className="flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold bg-[#B5532F] text-white mt-3 shadow-sm"
-            >
-              <Sparkles className="w-4 h-4 text-[#E4C27A]" /> Sign In / Studio Access
-            </button>
-          )}
-        </nav>
-      )}
+      {/* Mobile Menu Dropdown with Spring Physics */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+            className="border-t border-[#E1D6BE] px-4 py-3 md:hidden space-y-1.5 bg-[#FFFFFF]/95 backdrop-blur-xl shadow-xl"
+            aria-label="Mobile navigation"
+          >
+            {navItems.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => { setCurrentTab(id); setMenuOpen(false); }}
+                className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-xs font-bold transition ${
+                  currentTab === id
+                    ? 'bg-[#1B2352] text-white shadow-xs'
+                    : 'text-[#4A4458] hover:bg-[#FAF5EA] hover:text-[#1F1A2E]'
+                }`}
+              >
+                <Icon className="h-4 w-4 text-[#B8893A]" />{label}
+              </button>
+            ))}
+            {!user && (
+              <button
+                type="button"
+                onClick={() => { setCurrentTab('login'); setMenuOpen(false); }}
+                className="flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold bg-[#B5532F] text-white mt-3 shadow-sm hover:bg-[#991B1B] transition-colors"
+              >
+                <Sparkles className="w-4 h-4 text-[#E4C27A]" /> Sign In / Studio Access
+              </button>
+            )}
+          </motion.nav>
+        )}
+      </AnimatePresence>
 
-      {showTrackModal && <OrderTrackModal onClose={() => setShowTrackModal(false)} />}
-      {showNotifications && (
-        <NotificationModal
-          onClose={() => setShowNotifications(false)}
-          onNavigateTab={setCurrentTab}
-        />
-      )}
+      <AnimatePresence>
+        {showTrackModal && <OrderTrackModal onClose={() => setShowTrackModal(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showNotifications && (
+          <NotificationModal
+            onClose={() => setShowNotifications(false)}
+            onNavigateTab={setCurrentTab}
+          />
+        )}
+      </AnimatePresence>
     </header>
   );
 };
