@@ -27,7 +27,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 4200,
     description: 'Characterized by geometrical patterns and mythological themes originating in the Mithila kingdom.',
     highlights: ['100% natural organic dyes', 'Ancestral Kachni & Bharni line work', 'Women artisan collective led'],
-    sampleImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/2adeba65-a3b6-448a-88bb-71068feed09a.jpg'
   },
   {
     id: 'channapatna',
@@ -40,7 +40,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 3100,
     description: 'Popularly known as Gombegala Ooru (toy-town), renowned for child-safe turned wooden toys with natural lacquer polish.',
     highlights: ['Non-toxic organic child-safe vegetable lacquer', 'Hand-lathed Wrightia wood', 'Tipu Sultan historic legacy'],
-    sampleImage: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/8ea142ca-6372-4e12-91e5-5a1bcb756294.jpg'
   },
   {
     id: 'pochampally',
@@ -53,7 +53,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 5400,
     description: 'Geometric blur patterns achieved through tie-and-dye warp and weft alignment in Bhoodan Pochampally.',
     highlights: ['Double Ikat complex mathematical weaves', 'UNESCO Best Tourism Village recognized', 'Zero mechanical automation'],
-    sampleImage: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/fe6ddec0-22d5-48f1-9ab5-34b87a74cf66.jpg'
   },
   {
     id: 'pashmina',
@@ -66,7 +66,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 6800,
     description: 'Ultra-luxurious, featherlight warmth hand-spun on traditional yender wheels and needle-embroidered by masters.',
     highlights: ['Sub-15 micron fineness test', 'Hand charkha spun yarn', 'Sozni needlework taking up to 1 year per shawl'],
-    sampleImage: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/1de238af-eaa2-4244-8959-4b4deacab81d.jpg'
   },
   {
     id: 'bagru',
@@ -79,7 +79,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 2900,
     description: 'Chippa community block print tradition utilizing clay paste resists and sun bleaching in riverbeds.',
     highlights: ['Fermented natural indigo vats', 'Teakwood engraved printing blocks', 'Eco-friendly biodegradable runoff'],
-    sampleImage: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/0a985587-0c5b-4017-b387-ee7e3084f982.jpg'
   },
   {
     id: 'bidriware',
@@ -92,7 +92,7 @@ export const INDIAN_CRAFT_CLUSTERS: CraftCluster[] = [
     artisanCount: 1200,
     description: 'Persian-Bahmani metal art where pure silver wires are hammered into hand-carved blackened zinc alloy.',
     highlights: ['Pure silver wire inlay', 'Unique oxidization with Bidar Fort mud', 'Corrosion-resistant permanent jet black finish'],
-    sampleImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80'
+    sampleImage: '/images/07422837-4d84-4eb6-b449-9af4b1322db0.jpg'
   }
 ];
 

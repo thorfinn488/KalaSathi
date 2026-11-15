@@ -420,7 +420,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-4">
             {filteredProducts.map((prod, index) => {
               const imageSrc = prod.image_url ? resolveAssetUrl(prod.image_url) : '/images/2adeba65-a3b6-448a-88bb-71068feed09a.jpg';
-              const price = prod.price || prod.pricing?.suggested_price || 4500;
+              const price = (typeof prod.price === 'number' ? prod.price : prod.price?.suggested_price) || prod.pricing?.suggested_price || 4500;
               const isFeature = index === 0;
 
               return (
@@ -539,7 +539,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                 Meet the Hands Behind the Heritage.
               </h2>
               <p className="text-base text-[#4A4458] leading-relaxed">
-                KalaSaathi stands beside self-help artisan women's groups and traditional families across 24 rural clusters. We replace layers of middlemen with AI cataloging, fair pricing, raw-material funding, and direct B2B market access.
+                KalaSathi stands beside self-help artisan women's groups and traditional families across 24 rural clusters. We replace layers of middlemen with AI cataloging, fair pricing, raw-material funding, and direct B2B market access.
               </p>
               <p className="text-base text-[#4A4458] leading-relaxed">
                 The result is simple: more of every rupee reaches the person who made the work.
@@ -805,7 +805,7 @@ export const PublicMarketplacePage: React.FC<PublicMarketplacePageProps> = ({
                 Explore Certified Crafts
               </a>
               <button onClick={onEnterStudio} className="btn btn-outline-light">
-                Partner with KalaSaathi
+                Partner with KalaSathi
               </button>
             </div>
           </div>

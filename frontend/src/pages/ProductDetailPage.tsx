@@ -77,8 +77,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
       const updated = await apiRequest<ProductDetail>(`/products/${productId}`);
       setProduct(updated);
       setIsEditing(false);
+      setActionSuccessMsg('Catalogue updated successfully.');
+      setTimeout(() => setActionSuccessMsg(null), 4000);
     } catch (err: any) {
-      alert('Failed to update catalogue: ' + err.message);
+      setPriceError('Failed to update catalogue: ' + err.message);
     } finally {
       setSaving(false);
     }
@@ -150,6 +152,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 font-sans">
+      {/* Toast Notification */}
+      {actionSuccessMsg && (
+        <div className="fixed top-20 right-6 z-50 bg-[#1B2352] text-[#F3EBDA] border border-[#E4C27A] font-bold text-xs px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-[#E4C27A]" />
+          {actionSuccessMsg}
+        </div>
+      )}
+
       {/* Back Header */}
       <button
         onClick={onBack}
@@ -501,7 +511,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
           onClose={() => setShowQuoteModal(false)}
           onSuccess={() => {
             setShowQuoteModal(false);
-            alert('Quotation Request Transmitted! Our artisan cluster desk is preparing your proposal.');
+            setActionSuccessMsg('Quotation Request Transmitted! Our artisan cluster desk is preparing your proposal.');
+            setTimeout(() => setActionSuccessMsg(null), 5000);
           }}
         />
       )}

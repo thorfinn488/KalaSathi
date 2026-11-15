@@ -40,7 +40,7 @@ interface Translations {
 
 const translations: Record<Language, Translations> = {
   en: {
-    appName: 'KalaSaathi',
+    appName: 'KalaSathi',
     tagline: 'AI Business Manager for Artisans',
     login: 'Log In',
     register: 'Sign Up',

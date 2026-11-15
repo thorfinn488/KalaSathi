@@ -25,12 +25,10 @@ function MainApp() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF5EA] flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 rounded-full bg-[#1B2352] text-[#E4C27A] flex items-center justify-center shadow-xl shadow-[#1B2352]/20 mb-4 animate-pulse">
-          <svg viewBox="0 0 32 32" aria-hidden="true" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M16 3l3.5 6.5L27 11l-5.5 5 1.5 8L16 20.5 9 24l1.5-8L5 11l7.5-1.5z"></path>
-          </svg>
+        <div className="w-16 h-16 rounded-2xl bg-[#1B2352] text-[#E4C27A] flex items-center justify-center shadow-xl shadow-[#1B2352]/20 mb-4 animate-pulse border border-[#E4C27A]/40">
+          <span className="font-serif font-black text-3xl text-[#F59E0B]">क</span>
         </div>
-        <p className="text-[#1F1A2E] font-serif font-bold text-lg">Loading KalaSaathi Heritage Platform...</p>
+        <p className="text-[#1F1A2E] font-serif font-bold text-lg">Loading KalaSathi Heritage Platform...</p>
         <p className="text-[#5E576B] text-xs mt-1">Connecting to rural master artisan clusters</p>
       </div>
     );
@@ -120,10 +118,10 @@ function MainApp() {
             {/* Brand column */}
             <div className="space-y-4 lg:col-span-2 max-w-md">
               <div className="flex items-center gap-2.5">
-                <svg viewBox="0 0 32 32" aria-hidden="true" className="w-7 h-7 text-[#E4C27A]" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M16 3l3.5 6.5L27 11l-5.5 5 1.5 8L16 20.5 9 24l1.5-8L5 11l7.5-1.5z"></path>
-                </svg>
-                <span className="font-serif font-bold text-2xl text-white">KalaSaathi</span>
+                <div className="w-8 h-8 rounded-xl bg-white/10 text-[#E4C27A] flex items-center justify-center border border-[#E4C27A]/30">
+                  <span className="font-serif font-black text-lg text-[#F59E0B]">क</span>
+                </div>
+                <span className="font-serif font-bold text-2xl text-white">KalaSathi</span>
               </div>
               <p className="text-sm text-[#F3EBDA]/85 leading-relaxed">
                 Our mission: bring India's GI-tagged artisans directly to the world, with fairness and verifiable proof at every step.
@@ -203,7 +201,7 @@ function MainApp() {
               </div>
             </div>
 
-            <p>© {new Date().getFullYear()} KalaSaathi Heritage Foundation. Living Heritage Meets Global Commerce.</p>
+            <p>© {new Date().getFullYear()} KalaSathi Heritage Foundation. Living Heritage Meets Global Commerce.</p>
           </div>
         </div>
       </footer>

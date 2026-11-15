@@ -56,11 +56,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
             onClick={() => setCurrentTab(user ? 'dashboard' : 'marketplace')}
             onKeyDown={(event) => event.key === 'Enter' && setCurrentTab(user ? 'dashboard' : 'marketplace')}
           >
-            {/* Heritage Star Emblem from Reference Design */}
-            <div className="w-10 h-10 rounded-full bg-[#1B2352] text-[#E4C27A] flex items-center justify-center shadow-md shadow-[#1B2352]/20 group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 32 32" aria-hidden="true" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M16 3l3.5 6.5L27 11l-5.5 5 1.5 8L16 20.5 9 24l1.5-8L5 11l7.5-1.5z"></path>
-              </svg>
+            {/* Authentic KalaSathi Craft Seal */}
+            <div className="w-10 h-10 rounded-2xl bg-[#1B2352] text-[#E4C27A] flex items-center justify-center shadow-md shadow-[#1B2352]/20 border border-[#E4C27A]/40 group-hover:scale-105 transition-transform overflow-hidden relative">
+              <span className="font-serif font-black text-xl text-[#F59E0B] select-none">क</span>
+              <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-[#B5532F] ring-1 ring-white/50" />
             </div>
             <div>
               <div className="flex items-center gap-2">
