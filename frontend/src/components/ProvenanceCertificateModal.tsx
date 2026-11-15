@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { ProductDetail } from '../types';
 import { 
   X, Award, CheckCircle2, ShieldCheck, Printer, QrCode, 
@@ -31,8 +32,19 @@ export const ProvenanceCertificateModal: React.FC<ProvenanceCertificateModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-heritage-navy/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl border border-heritage-sand bg-white shadow-2xl p-5 sm:p-8 space-y-5 text-heritage-navy max-h-[92vh] overflow-y-auto">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-heritage-navy/70 backdrop-blur-md"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+        className="relative w-full max-w-2xl rounded-3xl border border-heritage-sand bg-white shadow-2xl p-5 sm:p-8 space-y-5 text-heritage-navy max-h-[92vh] overflow-y-auto"
+      >
         
         {/* Modal Controls */}
         <div className="flex items-center justify-between border-b border-heritage-sand pb-4">
@@ -204,7 +216,7 @@ export const ProvenanceCertificateModal: React.FC<ProvenanceCertificateModalProp
         <div className="text-center text-[10px] text-stone-400">
           Official KalaSaathi Authenticity Engine · Linked to Ministry of Textiles Craft Cluster Registry
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
