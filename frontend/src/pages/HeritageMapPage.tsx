@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Sparkles, ArrowRight, ShieldCheck, Search, Users, ExternalLink, Award } from 'lucide-react';
+import { AnimatedCounter } from '../components/ui/AnimatedCounter';
+import { ShimmerBadge } from '../components/ui/ShimmerBadge';
 
 export interface CraftCluster {
   id: string;
@@ -186,20 +189,28 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
                       if (onSelectCluster) onSelectCluster(cluster);
                     }}
                   >
-                    {/* Pulsing ring for selected pin */}
+                    {/* Concentric radar ping rings for selected cluster */}
                     {isSelected && (
-                      <circle
-                        cx={cluster.coordinates.x}
-                        cy={cluster.coordinates.y}
-                        r="6"
-                        className="animate-ping opacity-30 fill-heritage-terracotta"
-                      />
+                      <>
+                        <circle
+                          cx={cluster.coordinates.x}
+                          cy={cluster.coordinates.y}
+                          r="7"
+                          className="animate-ping opacity-30 fill-heritage-terracotta"
+                        />
+                        <circle
+                          cx={cluster.coordinates.x}
+                          cy={cluster.coordinates.y}
+                          r="11"
+                          className="opacity-20 stroke-heritage-gold stroke-[0.8] fill-none animate-pulse"
+                        />
+                      </>
                     )}
                     
                     <circle
                       cx={cluster.coordinates.x}
                       cy={cluster.coordinates.y}
-                      r={isSelected ? 4 : 2.8}
+                      r={isSelected ? 4.2 : 2.8}
                       className={`transition-all duration-300 ${
                         isSelected 
                           ? 'fill-heritage-terracotta stroke-white stroke-[1.5]' 
@@ -234,98 +245,117 @@ export const HeritageMapPage: React.FC<CraftMapProps> = ({ onSelectCluster, onEx
             </div>
           </div>
 
-          {/* Horizontal Cluster Pill Selector */}
+          {/* Horizontal Cluster Pill Selector with sliding layoutId indicator */}
           <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {filteredClusters.map((cluster) => (
-              <button
-                key={cluster.id}
-                onClick={() => setSelectedCluster(cluster)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                  selectedCluster.id === cluster.id
-                    ? 'bg-heritage-navy text-white shadow-sm'
-                    : 'bg-heritage-ivory text-heritage-navy border border-heritage-sand hover:bg-stone-100'
-                }`}
-              >
-                <MapPin className="w-3 h-3 text-heritage-terracotta" />
-                {cluster.name}
-              </button>
-            ))}
+            {filteredClusters.map((cluster) => {
+              const isSelected = selectedCluster.id === cluster.id;
+              return (
+                <button
+                  key={cluster.id}
+                  onClick={() => setSelectedCluster(cluster)}
+                  className={`relative px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'text-white'
+                      : 'bg-heritage-ivory text-heritage-navy border border-heritage-sand hover:bg-stone-100'
+                  }`}
+                >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="active-cluster-map-pill"
+                      className="absolute inset-0 rounded-xl bg-heritage-navy shadow-sm -z-10"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <MapPin className={`w-3 h-3 ${isSelected ? 'text-heritage-gold' : 'text-heritage-terracotta'}`} />
+                  <span className="relative z-10">{cluster.name}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Selected Cluster Deep-Dive & Provenance Card (Col 5) */}
-        <div className="lg:col-span-5 bg-white border border-heritage-sand rounded-3xl p-6 sm:p-7 space-y-6 shadow-md relative">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <span className="text-[10px] text-heritage-terracotta font-bold uppercase tracking-wider block">
-                {selectedCluster.giTag} · {selectedCluster.state}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedCluster.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="lg:col-span-5 bg-white border border-heritage-sand rounded-3xl p-6 sm:p-7 space-y-6 shadow-md relative"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <span className="text-[10px] text-heritage-terracotta font-bold uppercase tracking-wider block">
+                  {selectedCluster.giTag} · {selectedCluster.state}
+                </span>
+                <h2 className="text-2xl font-black text-heritage-navy font-serif mt-1">
+                  {selectedCluster.name}
+                </h2>
+              </div>
+              <div className="p-2 bg-heritage-ivory rounded-2xl border border-heritage-sand text-heritage-gold">
+                <Award className="w-6 h-6" />
+              </div>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed">
+              {selectedCluster.description}
+            </p>
+
+            {/* Cluster Metrics */}
+            <div className="grid grid-cols-2 gap-3 bg-heritage-ivory p-4 rounded-2xl border border-heritage-sand/70 text-xs">
+              <div>
+                <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Artisan Guild</span>
+                <strong className="text-heritage-navy text-sm flex items-center gap-1.5 mt-0.5">
+                  <Users className="w-3.5 h-3.5 text-heritage-gold" />
+                  <AnimatedCounter value={selectedCluster.artisanCount} suffix=" Masters" />
+                </strong>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Craft Category</span>
+                <strong className="text-heritage-terracotta text-sm block mt-0.5 truncate">
+                  {selectedCluster.craftType}
+                </strong>
+              </div>
+
+              <div className="col-span-2 border-t border-heritage-sand/60 pt-2">
+                <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Ancestral Raw Materials</span>
+                <span className="text-stone-700 text-xs block mt-0.5">
+                  {selectedCluster.materials}
+                </span>
+              </div>
+            </div>
+
+            {/* Hallmark Highlights */}
+            <div className="space-y-2">
+              <span className="text-[10px] uppercase tracking-widest text-heritage-gold font-bold block">
+                Authenticity Hallmarks
               </span>
-              <h2 className="text-2xl font-black text-heritage-navy font-serif mt-1">
-                {selectedCluster.name}
-              </h2>
-            </div>
-            <div className="p-2 bg-heritage-ivory rounded-2xl border border-heritage-sand text-heritage-gold">
-              <Award className="w-6 h-6" />
-            </div>
-          </div>
-
-          <p className="text-xs text-stone-600 leading-relaxed">
-            {selectedCluster.description}
-          </p>
-
-          {/* Cluster Metrics */}
-          <div className="grid grid-cols-2 gap-3 bg-heritage-ivory p-4 rounded-2xl border border-heritage-sand/70 text-xs">
-            <div>
-              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Artisan Guild</span>
-              <strong className="text-heritage-navy text-sm flex items-center gap-1.5 mt-0.5">
-                <Users className="w-3.5 h-3.5 text-heritage-gold" />
-                {selectedCluster.artisanCount.toLocaleString()} Masters
-              </strong>
+              <div className="space-y-1.5">
+                {selectedCluster.highlights.map((highlight, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs text-stone-700">
+                    <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+                    <span>{highlight}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Craft Category</span>
-              <strong className="text-heritage-terracotta text-sm block mt-0.5 truncate">
-                {selectedCluster.craftType}
-              </strong>
+            {/* Action Footer */}
+            <div className="border-t border-heritage-sand/60 pt-4 flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => {
+                  if (onExploreMarketplace) onExploreMarketplace();
+                }}
+                className="btn btn-primary flex-1 py-2.5 px-4 text-xs flex items-center justify-center gap-2 shadow-md active:scale-95"
+              >
+                <span>Explore Cluster Crafts</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-
-            <div className="col-span-2 border-t border-heritage-sand/60 pt-2">
-              <span className="text-[10px] text-stone-500 uppercase tracking-wider block">Ancestral Raw Materials</span>
-              <span className="text-stone-700 text-xs block mt-0.5">
-                {selectedCluster.materials}
-              </span>
-            </div>
-          </div>
-
-          {/* Hallmark Highlights */}
-          <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-widest text-heritage-gold font-bold block">
-              Authenticity Hallmarks
-            </span>
-            <div className="space-y-1.5">
-              {selectedCluster.highlights.map((highlight, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-stone-700">
-                  <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-                  <span>{highlight}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Footer */}
-          <div className="border-t border-heritage-sand/60 pt-4 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={() => {
-                if (onExploreMarketplace) onExploreMarketplace();
-              }}
-              className="btn btn-primary flex-1 py-2.5 px-4 text-xs flex items-center justify-center gap-2 shadow-md"
-            >
-              <span>Explore Cluster Crafts</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
