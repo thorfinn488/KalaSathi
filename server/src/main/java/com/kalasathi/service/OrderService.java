@@ -280,6 +280,11 @@ public class OrderService {
     public OrderResponse updateDeliveryStatus(String id, String status) {
         OrderEntity order = orderRepository.findById(id)
                 .orElseThrow(() -> new ApiException("NOT_FOUND", "Order not found.", HttpStatus.NOT_FOUND));
+        if (order.getPaymentStatus() != OrderEntity.PaymentStatus.PAID
+                && !status.equalsIgnoreCase("CRAFTING")) {
+            throw new ApiException("PAYMENT_REQUIRED",
+                    "Order must be paid before advancing delivery status.", HttpStatus.CONFLICT);
+        }
         try {
             order.setDeliveryStatus(OrderEntity.DeliveryStatus.valueOf(status));
         } catch (IllegalArgumentException | NullPointerException exception) {

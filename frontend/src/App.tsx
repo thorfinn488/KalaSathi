@@ -214,7 +214,7 @@ export default function App() {
     <AuthProvider>
       <LanguageProvider>
         <MainApp />
-        <SpeedInsights />
+        {import.meta.env.PROD && <SpeedInsights />}
       </LanguageProvider>
     </AuthProvider>
   );

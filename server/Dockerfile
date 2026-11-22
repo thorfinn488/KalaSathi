@@ -1,3 +1,4 @@
+# Build from repo root: docker build -f server/Dockerfile -t kalasathi-api .
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 COPY server/pom.xml ./server/pom.xml
