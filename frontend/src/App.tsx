@@ -12,6 +12,7 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { OpportunitiesPage } from './pages/OpportunitiesPage';
 import { AdminPage } from './pages/AdminPage';
 import { PublicMarketplacePage } from './pages/PublicMarketplacePage';
+import { AiAssistantPage } from './pages/AiAssistantPage';
 import { HeritageMapPage } from './pages/HeritageMapPage';
 
 const showOrderDashboard = import.meta.env.VITE_SHOW_ORDER_DASHBOARD === 'true';
@@ -108,6 +109,9 @@ function MainApp() {
 
         {currentTab === 'opportunities' && (user?.role === 'BUYER' || user?.role === 'ADMIN') && <OpportunitiesPage />}
 
+        {currentTab === 'ai-assistant' && user && (
+          <AiAssistantPage />
+        )}
         {currentTab === 'admin' && user?.role === 'ADMIN' && <AdminPage />}
       </main>
 

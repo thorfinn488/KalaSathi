@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
     { id: 'marketplace', label: 'Explore Crafts', icon: Store, visible: true },
     { id: 'heritage-map', label: 'Cluster Map', icon: MapPin, visible: true },
     { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard, visible: Boolean(user) },
-    { id: 'order-dashboard', label: 'Order Analytics', icon: BarChart3, visible: user?.role === 'ADMIN' && showOrderDashboard },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, visible: Boolean(user) },
     { id: 'add-product', label: t.addProduct, icon: PlusCircle, visible: user?.role === 'ARTISAN' || user?.role === 'ADMIN' },
     { id: 'opportunities', label: t.opportunities, icon: ShoppingBag, visible: user?.role === 'BUYER' || user?.role === 'ADMIN' },
     { id: 'admin', label: 'Admin Panel', icon: ShieldCheck, visible: user?.role === 'ADMIN' },

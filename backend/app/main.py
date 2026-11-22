@@ -38,6 +38,18 @@ app.add_middleware(
 # Global custom exception handlers for standard response envelope
 setup_exception_handlers(app)
 
+# Session middleware (required for CSRF token handling)
+from starlette.middleware.sessions import SessionMiddleware
+app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
+
+# Security headers middleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CSRF protection middleware
+from app.middleware.csrf import CSRFMiddleware
+app.add_middleware(CSRFMiddleware)
+
 # Ensure the upload directory is writable in serverless deployments.
 upload_dir = settings.UPLOAD_DIR
 if os.getenv("VERCEL") and not os.path.isabs(upload_dir):
@@ -50,6 +62,9 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(products.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
+# AI placeholder router
+from app.api.v1 import ai
+app.include_router(ai.router, prefix="/api")
 
 
 @app.get("/healthz", tags=["Health"])
