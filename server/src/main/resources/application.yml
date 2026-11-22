@@ -1,15 +1,21 @@
 server:
   port: ${PORT:${SERVER_PORT:8080}}
   forward-headers-strategy: framework
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
 
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: never
+      show-details: when_authorized
+      probes:
+        enabled: true
 
 spring:
   application:
@@ -27,6 +33,13 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/kalasathi_db}
     username: ${DB_USERNAME:kalasathi}
     password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+      leak-detection-threshold: 2000
   data:
     redis:
       host: ${REDIS_HOST:localhost}

@@ -138,6 +138,10 @@ public class OrderService {
     public OrderResponse checkout(CheckoutRequest request) {
         ProductEntity product = productRepository.findById(request.product_id())
                 .orElseThrow(() -> new ApiException("NOT_FOUND", "Product not found.", HttpStatus.NOT_FOUND));
+        if (product.getStock() != null && product.getStock() > 0 && product.getStock() < request.quantity()) {
+            throw new ApiException("INSUFFICIENT_STOCK",
+                    "Only " + product.getStock() + " unit(s) remaining in stock for this craft piece.", HttpStatus.CONFLICT);
+        }
         double price = price(product.getPricing(), product.getPrice());
         if (!Double.isFinite(price) || price <= 0) {
             throw new ApiException("PRODUCT_UNPRICED",
@@ -210,11 +214,7 @@ public class OrderService {
         if (!MessageDigest.isEqual(expected, received)) {
             throw new ApiException("INVALID_PAYMENT_SIGNATURE", "Payment signature verification failed.", HttpStatus.BAD_REQUEST);
         }
-        if (order.getPaymentStatus() != OrderEntity.PaymentStatus.PAID) {
-            order.setPaymentStatus(OrderEntity.PaymentStatus.PAID);
-            order.setRazorpayPaymentId(request.razorpay_payment_id());
-            cacheInvalidationService.ordersChanged();
-        }
+        recordPaymentSuccess(order, request.razorpay_payment_id());
         return publicOrder(order);
     }
 
@@ -251,11 +251,7 @@ public class OrderService {
         }
         OrderEntity order = orderRepository.findFirstByRazorpayOrderId(gatewayOrderId)
                 .orElseThrow(() -> new ApiException("NOT_FOUND", "Order not found.", HttpStatus.NOT_FOUND));
-        if (order.getPaymentStatus() != OrderEntity.PaymentStatus.PAID) {
-            order.setPaymentStatus(OrderEntity.PaymentStatus.PAID);
-            order.setRazorpayPaymentId(paymentId);
-            cacheInvalidationService.ordersChanged();
-        }
+        recordPaymentSuccess(order, paymentId);
         return new WebhookAcknowledgement(true);
     }
 
@@ -267,13 +263,28 @@ public class OrderService {
         OrderEntity order = orderRepository.findById(id)
                 .orElseThrow(() -> new ApiException("NOT_FOUND", "Order not found.", HttpStatus.NOT_FOUND));
         if (order.getPaymentStatus() == OrderEntity.PaymentStatus.PENDING) {
-            order.setPaymentStatus(OrderEntity.PaymentStatus.PAID);
-            cacheInvalidationService.ordersChanged();
+            recordPaymentSuccess(order, null);
         } else if (order.getPaymentStatus() != OrderEntity.PaymentStatus.PAID) {
             throw new ApiException("INVALID_ORDER_STATE",
                     "Order cannot be confirmed in the current state.", HttpStatus.CONFLICT);
         }
         return toCheckoutOrder(order, "sandbox", null);
+    }
+
+    private void recordPaymentSuccess(OrderEntity order, String paymentId) {
+        if (order.getPaymentStatus() != OrderEntity.PaymentStatus.PAID) {
+            order.setPaymentStatus(OrderEntity.PaymentStatus.PAID);
+            if (paymentId != null && !paymentId.isBlank()) {
+                order.setRazorpayPaymentId(paymentId);
+            }
+            ProductEntity product = order.getProduct();
+            if (product != null && product.getStock() != null && product.getStock() > 0) {
+                int newStock = Math.max(0, product.getStock() - order.getQuantity());
+                product.setStock(newStock);
+                productRepository.save(product);
+            }
+            cacheInvalidationService.ordersChanged();
+        }
     }
 
     @Transactional
