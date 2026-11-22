@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { UserRole } from '../types';
 import { OtpVerificationCard } from '../components/ui/OtpVerificationCard';
+import { CraftSpecialtySelector } from '../components/ui/CraftSpecialtySelector';
 import {
   User,
   Phone,
@@ -42,7 +43,9 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [region, setRegion] = useState('Patiala, Punjab');
-  const [craftSpecialty, setCraftSpecialty] = useState('Phulkari Embroidery');
+  const [selectedCrafts, setSelectedCrafts] = useState<string[]>([
+    'Phulkari Embroidery · ਫੁਲਕਾਰੀ / फुलकारी'
+  ]);
   const [companyName, setCompanyName] = useState('');
   const [requirements, setRequirements] = useState('');
 
@@ -85,13 +88,18 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
         throw new Error('Invalid verification code. Please check the code banner above.');
       }
 
+      const craftString =
+        selectedCrafts.length > 0
+          ? selectedCrafts.join(', ')
+          : 'Traditional Crafts';
+
       await register(
         name,
         phone.replace(/\D/g, ''),
         password,
         role,
         role === 'ARTISAN' ? region : undefined,
-        role === 'ARTISAN' ? craftSpecialty : undefined,
+        role === 'ARTISAN' ? craftString : undefined,
         role === 'BUYER' ? companyName : undefined,
         role === 'BUYER' ? requirements : undefined
       );
@@ -324,10 +332,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
 
                 {/* Role Specific Fields */}
                 {role === 'ARTISAN' ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-2xl bg-amber-50/40 border border-amber-200/60">
+                  <div className="space-y-3 p-3 rounded-2xl bg-amber-50/40 border border-amber-200/60">
                     <div className="space-y-1">
                       <label className="block text-[11px] font-bold text-stone-700">
-                        Region / State (क्षेत्र)
+                        Region / State (राज्य / क्षेत्र)
                       </label>
                       <div className="relative">
                         <MapPin className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
@@ -335,26 +343,17 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onNavigat
                           type="text"
                           value={region}
                           onChange={(e) => setRegion(e.target.value)}
-                          placeholder="e.g. Patiala, Punjab"
+                          placeholder="e.g. Patiala, Punjab (पंजाब)"
                           className="w-full pl-9 pr-3 py-2 rounded-xl border border-amber-200 bg-white text-heritage-navy font-medium text-xs focus:border-terracotta-500 outline-none transition-all"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="block text-[11px] font-bold text-stone-700">
-                        Craft Specialty (कला का प्रकार)
-                      </label>
-                      <div className="relative">
-                        <Palette className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
-                        <input
-                          type="text"
-                          value={craftSpecialty}
-                          onChange={(e) => setCraftSpecialty(e.target.value)}
-                          placeholder="e.g. Phulkari / Madhubani"
-                          className="w-full pl-9 pr-3 py-2 rounded-xl border border-amber-200 bg-white text-heritage-navy font-medium text-xs focus:border-terracotta-500 outline-none transition-all"
-                        />
-                      </div>
+                    <div>
+                      <CraftSpecialtySelector
+                        selectedCrafts={selectedCrafts}
+                        onChange={setSelectedCrafts}
+                      />
                     </div>
                   </div>
                 ) : (

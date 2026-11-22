@@ -224,14 +224,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
 
           {/* Authentication Mode Tabs */}
           {otpStep === 'input' && (
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-heritage-bg border border-heritage-border text-xs font-bold">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-stone-100 border border-heritage-border text-xs font-bold">
               <button
                 type="button"
                 onClick={() => { setActiveTab('phone-otp'); setError(null); }}
-                className={`py-2 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'phone-otp'
-                    ? 'bg-heritage-navy text-white shadow-sm'
-                    : 'text-stone-600 hover:text-heritage-navy'
+                    ? 'bg-heritage-navy text-white shadow-md'
+                    : 'text-stone-700 hover:text-heritage-navy hover:bg-white/70'
                 }`}
               >
                 <Phone className="w-3.5 h-3.5" />
@@ -241,10 +241,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
               <button
                 type="button"
                 onClick={() => { setActiveTab('email-code'); setError(null); }}
-                className={`py-2 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'email-code'
-                    ? 'bg-heritage-navy text-white shadow-sm'
-                    : 'text-stone-600 hover:text-heritage-navy'
+                    ? 'bg-heritage-navy text-white shadow-md'
+                    : 'text-stone-700 hover:text-heritage-navy hover:bg-white/70'
                 }`}
               >
                 <Mail className="w-3.5 h-3.5" />
@@ -254,10 +254,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onNavigateRegis
               <button
                 type="button"
                 onClick={() => { setActiveTab('password'); setError(null); }}
-                className={`py-2 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'password'
-                    ? 'bg-heritage-navy text-white shadow-sm'
-                    : 'text-stone-600 hover:text-heritage-navy'
+                    ? 'bg-heritage-navy text-white shadow-md'
+                    : 'text-stone-700 hover:text-heritage-navy hover:bg-white/70'
                 }`}
               >
                 <KeyRound className="w-3.5 h-3.5" />
