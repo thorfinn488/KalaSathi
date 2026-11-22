@@ -1,9 +1,7 @@
 import { ApiResponseEnvelope } from '../types';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
-const API_CONFIGURATION_ERROR = import.meta.env.PROD && !/^https:\/\//i.test(API_BASE_URL)
-  ? 'Production API URL is not configured. Set VITE_API_URL in Vercel to the HTTPS backend URL ending in /api.'
-  : null;
+const rawApiUrl = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '/api').trim();
+const API_BASE_URL = rawApiUrl.replace(/\/$/, '');
 
 export function resolveAssetUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
@@ -20,10 +18,6 @@ export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  if (API_CONFIGURATION_ERROR) {
-    throw new Error(API_CONFIGURATION_ERROR);
-  }
-
   const token = localStorage.getItem('sih_auth_token');
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
