@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, fireEvent } from '@testing-library/react';
+import { cleanup, render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { PublicMarketplacePage } from './PublicMarketplacePage';
 
@@ -48,7 +48,9 @@ describe('PublicMarketplacePage', () => {
     );
 
     const searchInput = screen.getByPlaceholderText(/Search by craft, artisan, or state/i);
-    fireEvent.change(searchInput, { target: { value: 'Pashmina' } });
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: 'Pashmina' } });
+    });
 
     // Should show Kashmiri Pashmina and hide Channapatna
     expect(screen.getByText(/Sozni Pashmina Shawl/i)).toBeInTheDocument();
